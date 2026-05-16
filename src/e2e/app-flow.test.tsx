@@ -19,7 +19,7 @@ describe("app end-to-end flow", () => {
 
     expect(await screen.findByRole("heading", { name: "Личный кабинет" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("link", { name: "Тарифы" }));
+    await user.click(screen.getAllByRole("link", { name: "Тарифы" })[0]);
     expect(await screen.findByRole("heading", { name: "Тарифы" })).toBeInTheDocument();
 
     const checkoutLinks = screen.getAllByRole("link", { name: "Оформить" });
@@ -32,7 +32,7 @@ describe("app end-to-end flow", () => {
       await screen.findByRole("heading", { name: "Личный кабинет" }, { timeout: 3000 }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("link", { name: "Скачать приложение" }));
+    await user.click(await screen.findByRole("link", { name: "Скачать приложение" }));
     expect(
       await screen.findByRole("heading", { name: "Скачать DubliMark для Windows" }),
     ).toBeInTheDocument();

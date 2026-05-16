@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getCurrentUser, login, register, logout } from "./auth";
+import {
+  getCurrentUser,
+  login,
+  register,
+  logout,
+  updatePassword,
+} from "./auth";
 
 describe("auth", () => {
   it("registers and logs in user", async () => {
@@ -18,7 +24,7 @@ describe("auth", () => {
     });
     expect(session.user.email).toBe("owner@example.com");
 
-    const current = getCurrentUser();
+    const current = await getCurrentUser();
     expect(current?.companyName).toBe("ООО Пример");
   });
 
@@ -44,7 +50,7 @@ describe("auth", () => {
     ).rejects.toThrow(/already exists/i);
   });
 
-  it("does not store password secrets in sessionStorage", async () => {
+  it("does not use the old browser session storage", async () => {
     await register({
       email: "session@example.com",
       password: "secure-pass-123",
@@ -59,13 +65,7 @@ describe("auth", () => {
     });
 
     const raw = sessionStorage.getItem("dms_session");
-    expect(raw).toBeTruthy();
-    expect(raw).not.toContain("passwordHash");
-    expect(raw).not.toContain("salt");
-
-    const session = JSON.parse(raw!) as { user: Record<string, unknown> };
-    expect(session.user).not.toHaveProperty("passwordHash");
-    expect(session.user).not.toHaveProperty("salt");
+    expect(raw).toBeNull();
   });
 
   it("clears session on logout", async () => {
@@ -78,13 +78,27 @@ describe("auth", () => {
       consent: true,
     });
     await login({ email: "logout@example.com", password: "secure-pass-123" });
-    logout();
-    expect(getCurrentUser()).toBeNull();
+    await logout();
+    expect(await getCurrentUser()).toBeNull();
   });
 
-  it("removes malformed session payload", () => {
-    sessionStorage.setItem("dms_session", "{not-json");
-    expect(getCurrentUser()).toBeNull();
-    expect(sessionStorage.getItem("dms_session")).toBeNull();
+  it("updates password for the current recovery session", async () => {
+    await register({
+      email: "reset@example.com",
+      password: "secure-pass-123",
+      companyName: "ООО Сброс",
+      inn: "",
+      phone: "",
+      consent: true,
+    });
+
+    await updatePassword("new-secure-pass-123");
+    await logout();
+
+    const session = await login({
+      email: "reset@example.com",
+      password: "new-secure-pass-123",
+    });
+    expect(session.user.email).toBe("reset@example.com");
   });
 });

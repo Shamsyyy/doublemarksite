@@ -7,13 +7,15 @@ export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setMessage(null);
     const form = new FormData(event.currentTarget);
     try {
-      await register({
+      const result = await register({
         email: String(form.get("email")),
         password: String(form.get("password")),
         companyName: String(form.get("companyName")),
@@ -21,6 +23,10 @@ export function RegisterPage() {
         phone: String(form.get("phone") ?? ""),
         consent: form.get("consent") === "on",
       });
+      if (result.needsEmailConfirmation) {
+        setMessage("Проверьте почту для подтверждения регистрации.");
+        return;
+      }
       navigate("/account");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка регистрации");
@@ -97,6 +103,11 @@ export function RegisterPage() {
         {error && (
           <p id="register-form-error" className="error" role="alert" aria-live="assertive">
             {error}
+          </p>
+        )}
+        {message && (
+          <p className="success" role="status" aria-live="polite">
+            {message}
           </p>
         )}
         <button type="submit" className="btn btn-primary">

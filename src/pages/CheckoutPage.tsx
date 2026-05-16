@@ -34,11 +34,11 @@ export function CheckoutPage() {
     }
     setIsProcessing(true);
     try {
-      const checkout = backendAdapter.getOrCreatePendingCheckout(
+      const payment = await backendAdapter.processPaymentOutcome(
         currentUser.id,
         checkoutPlanId,
+        outcome,
       );
-      const payment = backendAdapter.processPaymentOutcome(checkout.id, outcome);
       setStatus(
         payment.status === "succeeded"
           ? "Оплата прошла. Лицензия активирована."
@@ -63,7 +63,8 @@ export function CheckoutPage() {
         <p>Имитация платёжного провайдера. В продакшене подключите YooKassa/CloudPayments.</p>
         <p className="muted" role="note">
           Sandbox: кнопки ниже только симулируют оплату в браузере, без реального списания и без
-          защищённого платёжного шлюза.
+          защищённого платёжного шлюза. TODO: В продакшене заменить на YooKassa/CloudPayments webhook.
+          Не активировать подписку только с frontend.
         </p>
         <div className="hero-actions">
           <button

@@ -1,13 +1,10 @@
-import { createId, createSalt, hashPassword } from "./crypto";
-import { readJson, writeJson } from "./storage";
+import type { User } from "@supabase/supabase-js";
+import { getSupabaseClient } from "./supabase/client";
 import {
   validateLogin,
   validateRegistration,
   type RegistrationInput,
 } from "./validation";
-
-const USERS_KEY = "dms_users";
-const SESSION_KEY = "dms_session";
 
 export type PublicUser = {
   id: string;
@@ -15,12 +12,8 @@ export type PublicUser = {
   companyName: string;
   inn: string;
   phone: string;
+  role: "user" | "admin";
   createdAt: string;
-};
-
-type StoredUser = PublicUser & {
-  passwordHash: string;
-  salt: string;
 };
 
 export type Session = {
@@ -29,52 +22,88 @@ export type Session = {
   expiresAt: string;
 };
 
-function loadUsers(): StoredUser[] {
-  return readJson<StoredUser[]>(USERS_KEY, []);
+export type RegistrationResult = {
+  user: PublicUser | null;
+  needsEmailConfirmation: boolean;
+};
+
+type ProfileRow = {
+  id: string;
+  email: string | null;
+  company_name: string | null;
+  inn: string | null;
+  phone: string | null;
+  role: "user" | "admin" | null;
+  created_at: string | null;
+};
+
+function metadataString(user: User, key: string): string {
+  const value = user.user_metadata?.[key];
+  return typeof value === "string" ? value : "";
 }
 
-function saveUsers(users: StoredUser[]): void {
-  writeJson(USERS_KEY, users);
+async function getProfile(userId: string): Promise<ProfileRow | null> {
+  const { data, error } = await getSupabaseClient()
+    .from("profiles")
+    .select("id,email,company_name,inn,phone,role,created_at")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    if (
+      error.message.includes("public.profiles") ||
+      error.message.includes("schema cache")
+    ) {
+      return null;
+    }
+    throw new Error(error.message);
+  }
+
+  return (data as ProfileRow | null) ?? null;
 }
 
-function toPublicUser(user: StoredUser): PublicUser {
+async function toPublicUser(user: User): Promise<PublicUser> {
+  const profile = await getProfile(user.id);
   return {
     id: user.id,
-    email: user.email,
-    companyName: user.companyName,
-    inn: user.inn,
-    phone: user.phone,
-    createdAt: user.createdAt,
+    email: profile?.email ?? user.email ?? "",
+    companyName: profile?.company_name ?? metadataString(user, "company_name"),
+    inn: profile?.inn ?? metadataString(user, "inn"),
+    phone: profile?.phone ?? metadataString(user, "phone"),
+    role: profile?.role === "admin" ? "admin" : "user",
+    createdAt: profile?.created_at ?? user.created_at,
   };
 }
 
-export async function register(input: RegistrationInput): Promise<PublicUser> {
+export async function register(
+  input: RegistrationInput,
+): Promise<RegistrationResult> {
   const validation = validateRegistration(input);
   if (!validation.ok) {
     throw new Error(`Invalid registration: ${validation.errors.join(", ")}`);
   }
 
   const email = input.email.trim().toLowerCase();
-  const users = loadUsers();
-  if (users.some((u) => u.email === email)) {
-    throw new Error("User already exists");
+  const { data, error } = await getSupabaseClient().auth.signUp({
+    email,
+    password: input.password,
+    options: {
+      data: {
+        company_name: input.companyName.trim(),
+        inn: input.inn.replace(/\s/g, ""),
+        phone: input.phone.trim(),
+      },
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
   }
 
-  const salt = createSalt();
-  const passwordHash = await hashPassword(input.password, salt);
-  const user: StoredUser = {
-    id: createId("usr"),
-    email,
-    passwordHash,
-    salt,
-    companyName: input.companyName.trim(),
-    inn: input.inn.replace(/\s/g, ""),
-    phone: input.phone.trim(),
-    createdAt: new Date().toISOString(),
+  return {
+    user: data.user && data.session ? await toPublicUser(data.user) : null,
+    needsEmailConfirmation: Boolean(data.user && !data.session),
   };
-  users.push(user);
-  saveUsers(users);
-  return toPublicUser(user);
 }
 
 export async function login(input: {
@@ -87,53 +116,74 @@ export async function login(input: {
   }
 
   const email = input.email.trim().toLowerCase();
-  const user = loadUsers().find((u) => u.email === email);
-  if (!user) {
-    throw new Error("Invalid credentials");
+  const { data, error } = await getSupabaseClient().auth.signInWithPassword({
+    email,
+    password: input.password,
+  });
+
+  if (error || !data.user || !data.session) {
+    throw new Error(error?.message ?? "Invalid credentials");
   }
 
-  const passwordHash = await hashPassword(input.password, user.salt);
-  if (passwordHash !== user.passwordHash) {
-    throw new Error("Invalid credentials");
-  }
-
+  const publicUser = await toPublicUser(data.user);
   const session: Session = {
-    token: createId("sess"),
-    user: toPublicUser(user),
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
+    token: data.session.access_token,
+    user: publicUser,
+    expiresAt: data.session.expires_at
+      ? new Date(data.session.expires_at * 1000).toISOString()
+      : new Date(Date.now() + 1000 * 60 * 60).toISOString(),
   };
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
   return session;
 }
 
-export function getCurrentUser(): PublicUser | null {
-  const raw = sessionStorage.getItem(SESSION_KEY);
-  if (!raw) {
+export async function getCurrentUser(): Promise<PublicUser | null> {
+  const { data, error } = await getSupabaseClient().auth.getUser();
+  if (error || !data.user) {
     return null;
   }
-  try {
-    const session = JSON.parse(raw) as Session;
-    if (new Date(session.expiresAt).getTime() < Date.now()) {
-      logout();
-      return null;
+  return toPublicUser(data.user);
+}
+
+export async function logout(): Promise<void> {
+  const { error } = await getSupabaseClient().auth.signOut();
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function requestPasswordReset(
+  email: string,
+): Promise<{ ok: true; message: string }> {
+  const redirectTo =
+    typeof window === "undefined"
+      ? undefined
+      : `${window.location.origin}/update-password`;
+  const { error } = await getSupabaseClient().auth.resetPasswordForEmail(
+    email.trim().toLowerCase(),
+    { redirectTo },
+  );
+
+  if (error) {
+    if (error.message.toLowerCase().includes("rate limit")) {
+      throw new Error("Слишком много запросов. Попробуйте позже.");
     }
-    return session.user;
-  } catch {
-    logout();
-    return null;
+    throw new Error(error.message);
   }
-}
 
-export function logout(): void {
-  sessionStorage.removeItem(SESSION_KEY);
-}
-
-export function requestPasswordReset(email: string): { ok: true; message: string } {
-  // Keep side effects deterministic while avoiding user enumeration details.
-  void email.trim();
   return {
     ok: true,
     message:
-      "Если аккаунт существует, инструкция по сбросу отправлена на email (симуляция в MVP).",
+      "Если аккаунт существует, инструкция по сбросу отправлена на email.",
   };
+}
+
+export async function updatePassword(password: string): Promise<void> {
+  if (password.length < 8) {
+    throw new Error("Пароль должен быть не короче 8 символов.");
+  }
+
+  const { error } = await getSupabaseClient().auth.updateUser({ password });
+  if (error) {
+    throw new Error(error.message);
+  }
 }

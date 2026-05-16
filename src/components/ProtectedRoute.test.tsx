@@ -11,7 +11,7 @@ function LoginStateProbe() {
 }
 
 describe("ProtectedRoute", () => {
-  it("redirects unauthenticated users to /login with state.from preserved", () => {
+  it("redirects unauthenticated users to /login with state.from preserved", async () => {
     render(
       <MemoryRouter initialEntries={["/account"]}>
         <AuthProvider>
@@ -31,10 +31,10 @@ describe("ProtectedRoute", () => {
     );
 
     expect(screen.queryByText("Protected content")).not.toBeInTheDocument();
-    expect(screen.getByTestId("login-from")).toHaveTextContent("/account");
+    expect(await screen.findByTestId("login-from")).toHaveTextContent("/account");
   });
 
-  it("preserves path, search and hash in redirect state", () => {
+  it("preserves path, search and hash in redirect state", async () => {
     render(
       <MemoryRouter initialEntries={["/account?tab=billing#section2"]}>
         <AuthProvider>
@@ -53,6 +53,7 @@ describe("ProtectedRoute", () => {
       </MemoryRouter>,
     );
 
+    await screen.findByTestId("login-from");
     const loginFromNodes = screen.getAllByTestId("login-from");
     const latestLoginFrom = loginFromNodes[loginFromNodes.length - 1];
     expect(latestLoginFrom).toHaveTextContent("/account?tab=billing#section2");

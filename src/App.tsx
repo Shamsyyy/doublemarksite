@@ -9,9 +9,11 @@ import { LegalPage } from "./pages/LegalPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
+import { UpdatePasswordPage } from "./pages/UpdatePasswordPage";
 import { AccountPage } from "./pages/AccountPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import { DownloadPage } from "./pages/DownloadPage";
+import { AdminPage } from "./pages/AdminPage";
 
 export function App() {
   return (
@@ -29,6 +31,7 @@ export function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
+            <Route path="update-password" element={<UpdatePasswordPage />} />
             <Route
               path="account"
               element={
@@ -50,6 +53,14 @@ export function App() {
               element={
                 <ProtectedRoute>
                   <DownloadPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin"
+              element={
+                <ProtectedRoute>
+                  <AdminPage />
                 </ProtectedRoute>
               }
             />

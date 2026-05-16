@@ -11,25 +11,47 @@ import {
 import type { RegistrationInput } from "../lib/validation";
 import { AuthContext } from "./auth-context";
 import { backendAdapter } from "../lib/backend/adapter";
+import { getSupabaseClient } from "../lib/supabase/client";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<PublicUser | null>(() =>
-    backendAdapter.getCurrentUser(),
-  );
+  const [user, setUser] = useState<PublicUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const syncUser = () => {
-      setUser(backendAdapter.getCurrentUser());
+    let isMounted = true;
+
+    const syncUser = async () => {
+      try {
+        const currentUser = await backendAdapter.getCurrentUser();
+        if (isMounted) {
+          setUser(currentUser);
+        }
+      } catch {
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
     };
 
-    const intervalId = window.setInterval(syncUser, 30_000);
-    window.addEventListener("visibilitychange", syncUser);
-    window.addEventListener("focus", syncUser);
+    void syncUser();
+
+    let unsubscribe: (() => void) | undefined;
+    try {
+      const { data } = getSupabaseClient().auth.onAuthStateChange(() => {
+        void syncUser();
+      });
+      unsubscribe = () => data.subscription.unsubscribe();
+    } catch {
+      // Supabase may be unconfigured during local setup; initial syncUser handles state.
+    }
 
     return () => {
-      window.clearInterval(intervalId);
-      window.removeEventListener("visibilitychange", syncUser);
-      window.removeEventListener("focus", syncUser);
+      isMounted = false;
+      unsubscribe?.();
     };
   }, []);
 
@@ -42,22 +64,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const register = useCallback(async (input: RegistrationInput) => {
-    await backendAdapter.register(input);
-    const session = await backendAdapter.login({
-      email: input.email,
-      password: input.password,
-    });
-    setUser(session.user);
+    const result = await backendAdapter.register(input);
+    setUser(result.user);
+    return { needsEmailConfirmation: result.needsEmailConfirmation };
   }, []);
 
-  const logout = useCallback(() => {
-    backendAdapter.logout();
+  const logout = useCallback(async () => {
+    await backendAdapter.logout();
     setUser(null);
   }, []);
 
   const value = useMemo(
-    () => ({ user, login, register, logout }),
-    [user, login, register, logout],
+    () => ({ user, isLoading, login, register, logout }),
+    [user, isLoading, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

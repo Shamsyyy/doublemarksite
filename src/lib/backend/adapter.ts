@@ -5,55 +5,48 @@ import {
   register,
   requestPasswordReset,
   type PublicUser,
+  type RegistrationResult,
   type Session,
 } from "../auth";
 import {
-  getOrCreatePendingCheckout,
-  getPaymentsForUser,
-  processSandboxPayment,
-  type CheckoutSession,
+  getCurrentSubscription,
+  getUserPayments,
+  hasActiveSubscription,
+  processSandboxCheckout,
   type PaymentRecord,
-} from "../payments";
-import {
-  getActiveEntitlement,
-  hasActiveLicense,
-  type Entitlement,
-} from "../licenses";
+  type SubscriptionRecord,
+} from "../subscriptions";
 import type { RegistrationInput } from "../validation";
 import type { PlanId } from "../../content/pricing";
 
 export type PaymentOutcome = "succeeded" | "failed";
 
 export type BackendAdapter = {
-  getCurrentUser: () => PublicUser | null;
+  getCurrentUser: () => Promise<PublicUser | null>;
   login: (input: { email: string; password: string }) => Promise<Session>;
-  register: (input: RegistrationInput) => Promise<PublicUser>;
-  logout: () => void;
-  requestPasswordReset: (email: string) => { ok: true; message: string };
-  getOrCreatePendingCheckout: (
+  register: (input: RegistrationInput) => Promise<RegistrationResult>;
+  logout: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<{ ok: true; message: string }>;
+  processPaymentOutcome: (
     userId: string,
     planId: PlanId,
-  ) => CheckoutSession;
-  processPaymentOutcome: (
-    checkoutId: string,
     outcome: PaymentOutcome,
-  ) => PaymentRecord;
-  getPaymentsForUser: (userId: string) => PaymentRecord[];
-  hasActiveLicense: (userId: string) => boolean;
-  getActiveEntitlement: (userId: string) => Entitlement | null;
+  ) => Promise<PaymentRecord>;
+  getPaymentsForUser: (userId: string) => Promise<PaymentRecord[]>;
+  hasActiveLicense: (userId: string) => Promise<boolean>;
+  getActiveEntitlement: (userId: string) => Promise<SubscriptionRecord | null>;
 };
 
-export const browserBackendAdapter: BackendAdapter = {
+export const supabaseBackendAdapter: BackendAdapter = {
   getCurrentUser,
   login,
   register,
   logout,
   requestPasswordReset,
-  getOrCreatePendingCheckout,
-  processPaymentOutcome: processSandboxPayment,
-  getPaymentsForUser,
-  hasActiveLicense,
-  getActiveEntitlement,
+  processPaymentOutcome: processSandboxCheckout,
+  getPaymentsForUser: getUserPayments,
+  hasActiveLicense: hasActiveSubscription,
+  getActiveEntitlement: getCurrentSubscription,
 };
 
-export const backendAdapter: BackendAdapter = browserBackendAdapter;
+export const backendAdapter: BackendAdapter = supabaseBackendAdapter;

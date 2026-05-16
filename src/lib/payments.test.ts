@@ -1,15 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { register, login } from "./auth";
 import {
-  createCheckout,
-  getOrCreatePendingCheckout,
   processSandboxPayment,
   getPaymentsForUser,
 } from "./payments";
-import { getEntitlements, hasActiveLicense } from "./licenses";
+import { hasActiveLicense } from "./licenses";
+import { getCurrentSubscription, getUserDevices, upsertUserDevice } from "./subscriptions";
 
 describe("payments", () => {
-  it("grants license only after successful sandbox payment", async () => {
+  it("activates subscription only after successful sandbox payment", async () => {
     await register({
       email: "pay@example.com",
       password: "secure-pass-123",
@@ -23,22 +22,21 @@ describe("payments", () => {
       password: "secure-pass-123",
     });
 
-    expect(hasActiveLicense(session.user.id)).toBe(false);
+    expect(await hasActiveLicense(session.user.id)).toBe(false);
 
-    const checkout = createCheckout(session.user.id, "standard-monthly");
-    const failed = processSandboxPayment(checkout.id, "failed");
+    const failed = await processSandboxPayment(session.user.id, "standard-monthly", "failed");
     expect(failed.status).toBe("failed");
-    expect(hasActiveLicense(session.user.id)).toBe(false);
+    expect(await hasActiveLicense(session.user.id)).toBe(false);
 
-    const paid = processSandboxPayment(checkout.id, "succeeded");
+    const paid = await processSandboxPayment(session.user.id, "standard-monthly", "succeeded");
     expect(paid.status).toBe("succeeded");
-    expect(hasActiveLicense(session.user.id)).toBe(true);
+    expect(await hasActiveLicense(session.user.id)).toBe(true);
 
-    const history = getPaymentsForUser(session.user.id);
+    const history = await getPaymentsForUser(session.user.id);
     expect(history).toHaveLength(2);
   });
 
-  it("does not double-grant license on duplicate succeeded processing", async () => {
+  it("updates the current subscription on another successful sandbox payment", async () => {
     await register({
       email: "idem@example.com",
       password: "secure-pass-123",
@@ -52,40 +50,47 @@ describe("payments", () => {
       password: "secure-pass-123",
     });
 
-    const checkout = createCheckout(session.user.id, "standard-monthly");
-    const first = processSandboxPayment(checkout.id, "succeeded");
-    const second = processSandboxPayment(checkout.id, "succeeded");
+    const first = await processSandboxPayment(session.user.id, "standard-monthly", "succeeded");
+    const second = await processSandboxPayment(session.user.id, "elite-yearly", "succeeded");
 
-    expect(second.id).toBe(first.id);
-    expect(hasActiveLicense(session.user.id)).toBe(true);
+    expect(second.id).not.toBe(first.id);
+    expect(await hasActiveLicense(session.user.id)).toBe(true);
 
-    const activeEntitlements = getEntitlements().filter(
-      (e) => e.userId === session.user.id && e.status === "active",
-    );
-    expect(activeEntitlements).toHaveLength(1);
-    expect(getPaymentsForUser(session.user.id)).toHaveLength(1);
+    const subscription = await getCurrentSubscription(session.user.id);
+    expect(subscription?.planId).toBe("elite-yearly");
+    expect(subscription?.devicesLimit).toBe(10);
+    expect(await getPaymentsForUser(session.user.id)).toHaveLength(2);
   });
 
-  it("reuses pending checkout for the same user and plan", async () => {
+  it("tracks devices by user and device id for future apps", async () => {
     await register({
-      email: "pending@example.com",
+      email: "device@example.com",
       password: "secure-pass-123",
-      companyName: "ООО Пендинг",
+      companyName: "ООО Устройства",
       inn: "7707083893",
       phone: "",
       consent: true,
     });
     const session = await login({
-      email: "pending@example.com",
+      email: "device@example.com",
       password: "secure-pass-123",
     });
 
-    const first = getOrCreatePendingCheckout(session.user.id, "base-monthly");
-    const second = getOrCreatePendingCheckout(session.user.id, "base-monthly");
-    expect(second.id).toBe(first.id);
+    await upsertUserDevice({
+      userId: session.user.id,
+      deviceId: "desktop-1",
+      deviceName: "Office PC",
+      platform: "windows",
+    });
+    await upsertUserDevice({
+      userId: session.user.id,
+      deviceId: "desktop-1",
+      deviceName: "Office PC",
+      platform: "windows",
+    });
 
-    processSandboxPayment(first.id, "succeeded");
-    const third = getOrCreatePendingCheckout(session.user.id, "base-monthly");
-    expect(third.id).not.toBe(first.id);
+    const devices = await getUserDevices(session.user.id);
+    expect(devices).toHaveLength(1);
+    expect(devices[0].platform).toBe("windows");
   });
 });

@@ -4,12 +4,19 @@ import { Mail, Send } from "lucide-react";
 
 export function ResetPasswordPage() {
   const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError(null);
+    setMessage(null);
     const form = new FormData(event.currentTarget);
-    const result = backendAdapter.requestPasswordReset(String(form.get("email")));
-    setMessage(result.message);
+    try {
+      const result = await backendAdapter.requestPasswordReset(String(form.get("email")));
+      setMessage(result.message);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка отправки ссылки");
+    }
   }
 
   return (
@@ -31,6 +38,11 @@ export function ResetPasswordPage() {
       {message && (
         <p className="success" role="status" aria-live="polite">
           {message}
+        </p>
+      )}
+      {error && (
+        <p className="error" role="alert" aria-live="assertive">
+          {error}
         </p>
       )}
     </section>

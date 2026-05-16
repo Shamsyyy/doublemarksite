@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useRef, useEffect, useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { COMPANY } from "../content/site";
@@ -24,6 +24,7 @@ const QRIcon = () => (
 
 export function SiteLayout() {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const headerRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,7 +37,7 @@ export function SiteLayout() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // Scroll animation — Intersection Observer
+  // Scroll animation — re-runs on every route change so new page elements are observed
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -47,16 +48,16 @@ export function SiteLayout() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.05, rootMargin: '0px 0px -30px 0px' }
     );
     const timer = setTimeout(() => {
-      document.querySelectorAll('.fade-in-up').forEach((el) => observer.observe(el));
-    }, 100);
+      document.querySelectorAll('.fade-in-up:not(.is-visible)').forEach((el) => observer.observe(el));
+    }, 50);
     return () => {
       clearTimeout(timer);
       observer.disconnect();
     };
-  }, []);
+  }, [location.pathname]);
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -82,14 +83,17 @@ export function SiteLayout() {
         </button>
 
         <nav className={`nav${menuOpen ? ' nav-open' : ''}`} aria-label="Основная навигация">
-          <span onClick={closeMenu}><NavHashLink to="/#benefits">Преимущества</NavHashLink></span>
-          <span onClick={closeMenu}><NavHashLink to="/#how">Как работает</NavHashLink></span>
+          <NavHashLink to="/#benefits" onClick={closeMenu}>Преимущества</NavHashLink>
+          <NavHashLink to="/#how" onClick={closeMenu}>Как работает</NavHashLink>
           <Link to="/pricing" onClick={closeMenu}>Тарифы</Link>
           <Link to="/contacts" onClick={closeMenu}>Контакты</Link>
           {user ? (
             <>
               <Link to="/account" onClick={closeMenu}>Кабинет</Link>
               <Link to="/download" onClick={closeMenu}>Скачать</Link>
+              {user.role === "admin" && (
+                <Link to="/admin" onClick={closeMenu}>Админ</Link>
+              )}
               <button type="button" className="btn-link" onClick={() => { logout(); closeMenu(); }}>
                 Выйти
               </button>
@@ -134,9 +138,10 @@ export function SiteLayout() {
           <div className="footer-col">
             <h4>Навигация</h4>
             <nav className="footer-nav" aria-label="Навигация футера">
-              <Link to="/">Главная</Link>
+              <NavHashLink to="/">Главная</NavHashLink>
+              <NavHashLink to="/#benefits">Преимущества</NavHashLink>
+              <NavHashLink to="/#how">Как работает</NavHashLink>
               <Link to="/pricing">Тарифы</Link>
-              <Link to="/download">Скачать</Link>
               <Link to="/contacts">Контакты</Link>
             </nav>
           </div>
@@ -155,7 +160,7 @@ export function SiteLayout() {
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} {COMPANY.legalName}</span>
           <span className="muted" style={{ fontSize: '0.75rem' }}>
-            MVP-демо: данные только в браузере (localStorage)
+            Личный кабинет работает через Supabase
           </span>
           <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
         </div>

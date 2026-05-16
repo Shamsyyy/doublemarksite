@@ -62,7 +62,7 @@ export function PricingPage() {
           return (
             <article
               key={checkoutId}
-              className={`card fade-in-up ${plan.highlighted ? "card-highlight" : ""}`}
+              className={`card ${plan.highlighted ? "card-highlight" : ""}`}
               style={{ display: 'flex', flexDirection: 'column' }}
             >
               <div className="card-header">

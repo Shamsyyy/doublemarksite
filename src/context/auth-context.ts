@@ -4,9 +4,12 @@ import type { RegistrationInput } from "../lib/validation";
 
 export type AuthContextValue = {
   user: PublicUser | null;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (input: RegistrationInput) => Promise<void>;
-  logout: () => void;
+  register: (input: RegistrationInput) => Promise<{
+    needsEmailConfirmation: boolean;
+  }>;
+  logout: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
