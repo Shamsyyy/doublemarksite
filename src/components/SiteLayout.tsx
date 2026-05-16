@@ -1,37 +1,103 @@
 import { Link, Outlet } from "react-router-dom";
+import { useRef, useEffect, useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { COMPANY } from "../content/site";
 import { CookieBanner } from "./CookieBanner";
 import { NavHashLink } from "./NavHashLink";
 import { ScrollToHash } from "./ScrollToHash";
 
+const QRIcon = () => (
+  <span style={{ color: '#3b82f6' }}>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="2" y="2" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="4" y="4" width="5" height="5" rx="0.5" fill="currentColor"/>
+      <rect x="13" y="2" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="15" y="4" width="5" height="5" rx="0.5" fill="currentColor"/>
+      <rect x="2" y="13" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="4" y="15" width="5" height="5" rx="0.5" fill="currentColor"/>
+      <rect x="13" y="13" width="3" height="3" rx="0.5" fill="currentColor"/>
+      <rect x="18" y="13" width="4" height="4" rx="0.5" fill="currentColor"/>
+      <rect x="13" y="18" width="4" height="4" rx="0.5" fill="currentColor"/>
+    </svg>
+  </span>
+);
+
 export function SiteLayout() {
   const { user, logout } = useAuth();
+  const headerRef = useRef<HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Sticky header scroll shadow
+  useEffect(() => {
+    const handler = () => {
+      headerRef.current?.classList.toggle('header-scrolled', window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  // Scroll animation — Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    const timer = setTimeout(() => {
+      document.querySelectorAll('.fade-in-up').forEach((el) => observer.observe(el));
+    }, 100);
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <div className="site">
       <ScrollToHash />
-      <header className="header">
-        <Link to="/" className="logo">
+      <header ref={headerRef} className="header">
+        <Link to="/" className="logo" onClick={closeMenu}>
+          <QRIcon />
           {COMPANY.name}
         </Link>
-        <nav className="nav" aria-label="Основная навигация">
-          <NavHashLink to="/#benefits">Преимущества</NavHashLink>
-          <NavHashLink to="/#how">Как работает</NavHashLink>
-          <Link to="/pricing">Тарифы</Link>
-          <Link to="/contacts">Контакты</Link>
+
+        <button
+          type="button"
+          className="nav-hamburger"
+          aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(v => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav className={`nav${menuOpen ? ' nav-open' : ''}`} aria-label="Основная навигация">
+          <span onClick={closeMenu}><NavHashLink to="/#benefits">Преимущества</NavHashLink></span>
+          <span onClick={closeMenu}><NavHashLink to="/#how">Как работает</NavHashLink></span>
+          <Link to="/pricing" onClick={closeMenu}>Тарифы</Link>
+          <Link to="/contacts" onClick={closeMenu}>Контакты</Link>
           {user ? (
             <>
-              <Link to="/account">Кабинет</Link>
-              <Link to="/download">Скачать</Link>
-              <button type="button" className="btn-link" onClick={logout}>
+              <Link to="/account" onClick={closeMenu}>Кабинет</Link>
+              <Link to="/download" onClick={closeMenu}>Скачать</Link>
+              <button type="button" className="btn-link" onClick={() => { logout(); closeMenu(); }}>
                 Выйти
               </button>
             </>
           ) : (
             <>
-              <Link to="/login">Вход</Link>
-              <Link to="/register" className="btn btn-primary btn-small">
+              <Link to="/login" onClick={closeMenu}>Вход</Link>
+              <Link to="/register" className="btn btn-primary btn-small" onClick={closeMenu}>
                 Регистрация
               </Link>
             </>
@@ -39,25 +105,60 @@ export function SiteLayout() {
         </nav>
       </header>
 
+      <div
+        className={`nav-overlay${menuOpen ? ' nav-open' : ''}`}
+        onClick={closeMenu}
+        aria-hidden="true"
+      />
+
       <main className="main">
         <Outlet />
       </main>
 
       <footer className="footer">
-        <div>
-          <strong>{COMPANY.name}</strong>
-          <p>ИНН {COMPANY.inn} · {COMPANY.email}</p>
-          <p className="muted">
-            MVP-демо: вход, оплата и лицензии работают только в браузере (localStorage).
-            Это не продакшен-уровень безопасности и не замена серверной авторизации.
-          </p>
+        <div className="footer-cols">
+          <div className="footer-brand">
+            <Link to="/" className="logo">
+              <QRIcon />
+              {COMPANY.name}
+            </Link>
+            <p>
+              Windows-приложение для дублирования кодов<br />
+              маркировки Честного Знака для малого бизнеса.
+            </p>
+            <p style={{ fontSize: '0.8rem', marginTop: '0.75rem' }}>
+              <span className="muted">ИНН {COMPANY.inn}</span>
+            </p>
+          </div>
+
+          <div className="footer-col">
+            <h4>Навигация</h4>
+            <nav className="footer-nav" aria-label="Навигация футера">
+              <Link to="/">Главная</Link>
+              <Link to="/pricing">Тарифы</Link>
+              <Link to="/download">Скачать</Link>
+              <Link to="/contacts">Контакты</Link>
+            </nav>
+          </div>
+
+          <div className="footer-col">
+            <h4>Документы</h4>
+            <nav className="footer-nav" aria-label="Юридические ссылки">
+              <Link to="/legal/privacy">Конфиденциальность</Link>
+              <Link to="/legal/terms">Оферта</Link>
+              <Link to="/legal/cookies">Cookie</Link>
+              <Link to="/legal/requisites">Реквизиты</Link>
+            </nav>
+          </div>
         </div>
-        <nav className="footer-nav" aria-label="Юридические ссылки">
-          <Link to="/legal/privacy">Конфиденциальность</Link>
-          <Link to="/legal/terms">Оферта</Link>
-          <Link to="/legal/cookies">Cookie</Link>
-          <Link to="/legal/requisites">Реквизиты</Link>
-        </nav>
+
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} {COMPANY.legalName}</span>
+          <span className="muted" style={{ fontSize: '0.75rem' }}>
+            MVP-демо: данные только в браузере (localStorage)
+          </span>
+          <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
+        </div>
       </footer>
 
       <CookieBanner />

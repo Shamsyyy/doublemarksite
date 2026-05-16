@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { Mail, Lock, LogIn } from "lucide-react";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -29,25 +30,31 @@ export function LoginPage() {
       <form className="form card" onSubmit={onSubmit}>
         <label>
           Email
-          <input
-            name="email"
-            type="email"
-            autoComplete="email"
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? "login-form-error" : undefined}
-            required
-          />
+          <div className="input-wrap has-icon">
+            <Mail className="input-icon" size={16} />
+            <input
+              name="email"
+              type="email"
+              autoComplete="email"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "login-form-error" : undefined}
+              required
+            />
+          </div>
         </label>
         <label>
           Пароль
-          <input
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? "login-form-error" : undefined}
-            required
-          />
+          <div className="input-wrap has-icon">
+            <Lock className="input-icon" size={16} />
+            <input
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "login-form-error" : undefined}
+              required
+            />
+          </div>
         </label>
         {error && (
           <p id="login-form-error" className="error" role="alert" aria-live="assertive">
@@ -55,6 +62,7 @@ export function LoginPage() {
           </p>
         )}
         <button type="submit" className="btn btn-primary">
+          <LogIn size={16} />
           Войти
         </button>
       </form>

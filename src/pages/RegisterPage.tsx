@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { Mail, Lock, Building2, Hash, Phone, UserPlus } from "lucide-react";
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -32,38 +33,53 @@ export function RegisterPage() {
       <form className="form card" onSubmit={onSubmit}>
         <label>
           Email
-          <input
-            name="email"
-            type="email"
-            autoComplete="email"
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? "register-form-error" : undefined}
-            required
-          />
+          <div className="input-wrap has-icon">
+            <Mail className="input-icon" size={16} />
+            <input
+              name="email"
+              type="email"
+              autoComplete="email"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "register-form-error" : undefined}
+              required
+            />
+          </div>
         </label>
         <label>
           Пароль (мин. 8 символов)
-          <input
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            minLength={8}
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? "register-form-error" : undefined}
-            required
-          />
+          <div className="input-wrap has-icon">
+            <Lock className="input-icon" size={16} />
+            <input
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              minLength={8}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "register-form-error" : undefined}
+              required
+            />
+          </div>
         </label>
         <label>
           Организация
-          <input name="companyName" autoComplete="organization" required />
+          <div className="input-wrap has-icon">
+            <Building2 className="input-icon" size={16} />
+            <input name="companyName" autoComplete="organization" required />
+          </div>
         </label>
         <label>
           ИНН (10 или 12 цифр, необязательно)
-          <input name="inn" inputMode="numeric" />
+          <div className="input-wrap has-icon">
+            <Hash className="input-icon" size={16} />
+            <input name="inn" inputMode="numeric" />
+          </div>
         </label>
         <label>
           Телефон
-          <input name="phone" type="tel" autoComplete="tel" />
+          <div className="input-wrap has-icon">
+            <Phone className="input-icon" size={16} />
+            <input name="phone" type="tel" autoComplete="tel" />
+          </div>
         </label>
         <label className="checkbox">
           <input name="consent" type="checkbox" required />
@@ -84,6 +100,7 @@ export function RegisterPage() {
           </p>
         )}
         <button type="submit" className="btn btn-primary">
+          <UserPlus size={16} />
           Создать аккаунт
         </button>
       </form>

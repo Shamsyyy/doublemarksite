@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Download, Monitor, CheckCircle2, ArrowRight } from "lucide-react";
 import { DESKTOP_RELEASE } from "../content/site";
 import { useAuth } from "../context/useAuth";
 import { backendAdapter } from "../lib/backend/adapter";
@@ -15,29 +16,49 @@ export function DownloadPage() {
   return (
     <section className="section">
       <h1>Скачать DubliMark для Windows</h1>
-      <p className="lead">Версия {DESKTOP_RELEASE.version}</p>
+      <p className="lead">Настольное приложение для дублирования кодов Честного Знака</p>
 
-      {allowed ? (
-        <article className="card">
-          <p>{DESKTOP_RELEASE.changelog}</p>
-          <a className="btn btn-primary" href={DESKTOP_RELEASE.downloadUrl}>
-            Скачать установщик
-          </a>
-          <p className="muted">
-            Лицензия активна до{" "}
-            {entitlement
-              ? new Date(entitlement.validUntil).toLocaleDateString("ru-RU")
-              : "—"}
-          </p>
-        </article>
-      ) : (
-        <article className="card">
-          <p>Для скачивания нужна активная лицензия.</p>
-          <Link to="/pricing" className="btn btn-primary">
-            Перейти к тарифам
-          </Link>
-        </article>
-      )}
+      <div className="download-card">
+        <div className="download-badge">
+          <Monitor size={14} />
+          Windows · .NET 8 · WPF
+        </div>
+
+        {allowed ? (
+          <>
+            <div style={{ margin: '1rem 0 0.5rem' }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                {DESKTOP_RELEASE.version}
+              </div>
+              <div className="muted" style={{ fontSize: '0.875rem' }}>Текущая версия</div>
+            </div>
+            <p style={{ color: 'var(--muted)', fontSize: '0.9rem', margin: '1rem 0 1.5rem' }}>
+              {DESKTOP_RELEASE.changelog}
+            </p>
+            <a className="btn btn-primary" href={DESKTOP_RELEASE.downloadUrl} style={{ width: '100%', justifyContent: 'center' }}>
+              <Download size={18} />
+              Скачать установщик
+            </a>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}>
+              <CheckCircle2 size={14} style={{ color: 'var(--success)' }} />
+              <span className="muted" style={{ fontSize: '0.8rem' }}>
+                Лицензия активна до{' '}
+                {entitlement ? new Date(entitlement.validUntil).toLocaleDateString("ru-RU") : "—"}
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ margin: '1rem 0 1.5rem' }}>
+              <p style={{ color: 'var(--muted)', margin: 0 }}>Для скачивания нужна активная лицензия.</p>
+            </div>
+            <Link to="/pricing" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+              <ArrowRight size={16} />
+              Перейти к тарифам
+            </Link>
+          </>
+        )}
+      </div>
     </section>
   );
 }

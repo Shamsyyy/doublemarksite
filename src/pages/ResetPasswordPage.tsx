@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { backendAdapter } from "../lib/backend/adapter";
+import { Mail, Send } from "lucide-react";
 
 export function ResetPasswordPage() {
   const [message, setMessage] = useState<string | null>(null);
@@ -17,9 +18,13 @@ export function ResetPasswordPage() {
       <form className="form card" onSubmit={onSubmit}>
         <label>
           Email
-          <input name="email" type="email" autoComplete="email" required />
+          <div className="input-wrap has-icon">
+            <Mail className="input-icon" size={16} />
+            <input name="email" type="email" autoComplete="email" required />
+          </div>
         </label>
         <button type="submit" className="btn btn-primary">
+          <Send size={16} />
           Отправить ссылку
         </button>
       </form>
