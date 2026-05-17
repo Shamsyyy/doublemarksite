@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CheckCircle2, ShieldAlert } from "lucide-react";
 import { getSupabaseClient } from "../lib/supabase/client";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ export function AuthCallbackPage() {
 
   return (
     <section className="section narrow">
+      <BrandLogo size={44} withText={false} />
       <h1>Подтверждение входа</h1>
       <article className="card">
         {error ? (

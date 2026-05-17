@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Save } from "lucide-react";
 import { updatePassword } from "../lib/auth";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function UpdatePasswordPage() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export function UpdatePasswordPage() {
 
   return (
     <section className="section narrow">
+      <BrandLogo size={44} withText={false} />
       <h1>Новый пароль</h1>
       <form className="form card" onSubmit={onSubmit}>
         <p className="muted">

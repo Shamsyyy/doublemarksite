@@ -5,6 +5,7 @@ import { getPlanById } from "../content/pricing";
 import { useAuth } from "../context/useAuth";
 import { backendAdapter } from "../lib/backend/adapter";
 import { isSubscriptionActive, type PaymentRecord, type SubscriptionRecord } from "../lib/subscriptions";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function AccountPage() {
   const { user } = useAuth();
@@ -60,6 +61,7 @@ export function AccountPage() {
 
   return (
     <section className="section account-page">
+      <BrandLogo size={44} withText={false} />
       <h1>Личный кабинет</h1>
 
       <div className="account-top">

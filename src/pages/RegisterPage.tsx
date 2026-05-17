@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { Mail, Lock, Building2, Hash, Phone, UserPlus } from "lucide-react";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -35,6 +36,7 @@ export function RegisterPage() {
 
   return (
     <section className="section narrow">
+      <BrandLogo size={44} withText={false} />
       <h1>Регистрация</h1>
       <form className="form card" onSubmit={onSubmit}>
         <label>

@@ -5,6 +5,7 @@ import { DESKTOP_RELEASE } from "../content/site";
 import { useAuth } from "../context/useAuth";
 import { backendAdapter } from "../lib/backend/adapter";
 import { isSubscriptionActive, type SubscriptionRecord } from "../lib/subscriptions";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function DownloadPage() {
   const { user } = useAuth();
@@ -54,6 +55,7 @@ export function DownloadPage() {
 
   return (
     <section className="section">
+      <BrandLogo size={44} withText={false} />
       <h1>Скачать DoubleMark для Windows</h1>
       <p className="lead">Настольное приложение для дублирования кодов Честного Знака</p>
 

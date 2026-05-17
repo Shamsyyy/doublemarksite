@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { backendAdapter } from "../lib/backend/adapter";
 import { Mail, Send } from "lucide-react";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function ResetPasswordPage() {
   const [message, setMessage] = useState<string | null>(null);
@@ -21,6 +22,7 @@ export function ResetPasswordPage() {
 
   return (
     <section className="section narrow">
+      <BrandLogo size={44} withText={false} />
       <h1>Сброс пароля</h1>
       <form className="form card" onSubmit={onSubmit}>
         <label>

@@ -7,6 +7,7 @@ import {
   type BillingPeriod,
 } from "../content/pricing";
 import { useAuth } from "../context/useAuth";
+import { BrandLogo } from "../components/BrandLogo";
 
 export function PricingPage() {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ export function PricingPage() {
 
   return (
     <section className="section">
+      <BrandLogo size={44} withText={false} />
       <h1>Тарифы</h1>
       <p className="lead">
         14 дней бесплатно при оплате помесячно · 30 дней при оплате за год.

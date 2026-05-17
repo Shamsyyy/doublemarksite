@@ -7,6 +7,7 @@ import {
   HOW_IT_WORKS,
   PRODUCT_NOTES,
 } from "../content/site";
+import { BrandLogo } from "../components/BrandLogo";
 
 function AppMockup() {
   return (
@@ -136,6 +137,7 @@ export function HomePage() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
+          <BrandLogo size={52} withText={false} />
           <p className="eyebrow">Для малого бизнеса и склада</p>
           <h1>
             <span className="h1-gradient">{HERO.title.split(' ').slice(0, 3).join(' ')}</span>

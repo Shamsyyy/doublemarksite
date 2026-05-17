@@ -5,22 +5,7 @@ import { COMPANY } from "../content/site";
 import { CookieBanner } from "./CookieBanner";
 import { NavHashLink } from "./NavHashLink";
 import { ScrollToHash } from "./ScrollToHash";
-
-const QRIcon = () => (
-  <span style={{ color: '#3b82f6' }}>
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="2" y="2" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-      <rect x="4" y="4" width="5" height="5" rx="0.5" fill="currentColor"/>
-      <rect x="13" y="2" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-      <rect x="15" y="4" width="5" height="5" rx="0.5" fill="currentColor"/>
-      <rect x="2" y="13" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-      <rect x="4" y="15" width="5" height="5" rx="0.5" fill="currentColor"/>
-      <rect x="13" y="13" width="3" height="3" rx="0.5" fill="currentColor"/>
-      <rect x="18" y="13" width="4" height="4" rx="0.5" fill="currentColor"/>
-      <rect x="13" y="18" width="4" height="4" rx="0.5" fill="currentColor"/>
-    </svg>
-  </span>
-);
+import { BrandLogo } from "./BrandLogo";
 
 export function SiteLayout() {
   const { user, logout } = useAuth();
@@ -66,8 +51,7 @@ export function SiteLayout() {
       <ScrollToHash />
       <header ref={headerRef} className="header">
         <Link to="/" className="logo" onClick={closeMenu}>
-          <QRIcon />
-          {COMPANY.name}
+          <BrandLogo size={28} withText />
         </Link>
 
         <button
@@ -123,8 +107,7 @@ export function SiteLayout() {
         <div className="footer-cols">
           <div className="footer-brand">
             <Link to="/" className="logo">
-              <QRIcon />
-              {COMPANY.name}
+              <BrandLogo size={28} withText />
             </Link>
             <p>
               Windows-приложение для дублирования кодов<br />

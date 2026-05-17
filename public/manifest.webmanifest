@@ -1,0 +1,23 @@
+{
+  "name": "DoubleMark",
+  "short_name": "DoubleMark",
+  "theme_color": "#07111F",
+  "background_color": "#07111F",
+  "display": "standalone",
+  "start_url": "/doublemarksite/",
+  "scope": "/doublemarksite/",
+  "icons": [
+    {
+      "src": "/doublemarksite/brand/doublemark-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/doublemarksite/brand/doublemark-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

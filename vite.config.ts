@@ -7,7 +7,7 @@ declare const process: {
 
 const repositoryName = process.env.GITHUB_REPOSITORY?.split("/").pop();
 const githubPagesBase = process.env.VITE_BASE_PATH || (
-  repositoryName ? `/${repositoryName}/` : "/dublimarksite/"
+  repositoryName ? `/${repositoryName}/` : "/doublemarksite/"
 );
 
 export default defineConfig(({ command }) => ({
