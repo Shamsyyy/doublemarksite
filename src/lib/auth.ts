@@ -42,6 +42,17 @@ function metadataString(user: User, key: string): string {
   return typeof value === "string" ? value : "";
 }
 
+export function getAuthCallbackUrl(): string | undefined {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
+  return new URL(
+    "auth/callback",
+    `${window.location.origin}${import.meta.env.BASE_URL}`,
+  ).toString();
+}
+
 async function getProfile(userId: string): Promise<ProfileRow | null> {
   const { data, error } = await getSupabaseClient()
     .from("profiles")
@@ -88,6 +99,7 @@ export async function register(
     email,
     password: input.password,
     options: {
+      emailRedirectTo: getAuthCallbackUrl(),
       data: {
         company_name: input.companyName.trim(),
         inn: input.inn.replace(/\s/g, ""),
@@ -154,14 +166,9 @@ export async function logout(): Promise<void> {
 export async function requestPasswordReset(
   email: string,
 ): Promise<{ ok: true; message: string }> {
-  const baseUrl = import.meta.env.BASE_URL;
-  const redirectTo =
-    typeof window === "undefined"
-      ? undefined
-      : new URL("update-password", `${window.location.origin}${baseUrl}`).toString();
   const { error } = await getSupabaseClient().auth.resetPasswordForEmail(
     email.trim().toLowerCase(),
-    { redirectTo },
+    { redirectTo: getAuthCallbackUrl() },
   );
 
   if (error) {

@@ -120,6 +120,27 @@ const mockSupabase = vi.hoisted(() => {
         };
       },
       getUser: async () => ({ data: { user: currentUser }, error: null }),
+      getSession: async () => ({
+        data: {
+          session: currentUser
+            ? { access_token: nextId("token"), user: currentUser }
+            : null,
+        },
+        error: null,
+      }),
+      exchangeCodeForSession: async (code: string) => {
+        if (!code) {
+          return { data: { session: null }, error: { message: "Missing auth code" } };
+        }
+        return {
+          data: {
+            session: currentUser
+              ? { access_token: nextId("token"), user: currentUser }
+              : null,
+          },
+          error: null,
+        };
+      },
       signOut: async () => {
         currentUser = null;
         notify();

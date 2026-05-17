@@ -10,6 +10,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { UpdatePasswordPage } from "./pages/UpdatePasswordPage";
+import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { AccountPage } from "./pages/AccountPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
 import { DownloadPage } from "./pages/DownloadPage";
@@ -32,6 +33,7 @@ export function App() {
             <Route path="register" element={<RegisterPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
             <Route path="update-password" element={<UpdatePasswordPage />} />
+            <Route path="auth/callback" element={<AuthCallbackPage />} />
             <Route
               path="account"
               element={
