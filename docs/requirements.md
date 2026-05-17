@@ -1,10 +1,10 @@
-# DubliMarkSite — Product Discovery (Phase 0)
+# DoubleMark Site — Product Discovery (Phase 0)
 
 ## Product Promise
-DubliMark helps small businesses duplicate Chestny Znak (Честный Знак) marking codes: scan an existing code with a handheld scanner or phone camera, then send a duplicate to the printer quickly, with minimal confirmation steps.
+DoubleMark helps small businesses duplicate Chestny Znak (Честный Знак) marking codes: scan an existing code with a handheld scanner or phone camera, then send a duplicate to the printer quickly, with minimal confirmation steps.
 
-## Source Product (DubliMark Desktop)
-- Windows WPF/.NET 8 desktop app (`DubliMark` sibling project).
+## Source Product (DoubleMark Desktop)
+- Windows WPF/.NET 8 desktop app (`DoubleMark` sibling project).
 - Reads GS1 DataMatrix via COM scanner, HID keyboard wedge, or image decode (ZXing).
 - Supports full marking codes (~80+ bytes, AI 91/92) and short codes (~30 bytes).
 - Scanner setup matters: GS (0x1D) separator, FNC1, Virtual COM vs HID truncation risks.
@@ -16,9 +16,9 @@ Small business owners and operators who need fast reprinting of marking labels w
 Full web platform:
 - Marketing: homepage, benefits, how it works, contacts, pricing.
 - Legal/trust: privacy, terms/offerta, cookies, company requisites (ИНН placeholder until provided).
-- Auth: registration, login, password reset flow (email simulated in MVP).
-- Payments: sandbox checkout, entitlement after verified payment event.
-- Account: license status, payment history placeholder, download area.
+- Auth: registration, login, password reset flow via Supabase Auth.
+- Payments: sandbox checkout, subscriptions, and payment history in Supabase.
+- Account: subscription status, payment history, and gated download area.
 - Desktop link: Windows download gated by license (MVP uses placeholder installer URL).
 
 ## Honest Limits (Must Communicate On Site)

@@ -18,7 +18,7 @@ import { AdminPage } from "./pages/AdminPage";
 export function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route element={<SiteLayout />}>
             <Route index element={<HomePage />} />

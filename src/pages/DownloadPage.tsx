@@ -54,7 +54,7 @@ export function DownloadPage() {
 
   return (
     <section className="section">
-      <h1>Скачать DubliMark для Windows</h1>
+      <h1>Скачать DoubleMark для Windows</h1>
       <p className="lead">Настольное приложение для дублирования кодов Честного Знака</p>
 
       <div className="download-card">

@@ -1,14 +1,15 @@
 {
-  "name": "dublimarksite",
+  "name": "doublemark-site",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "DubliMark marketing and account web platform",
+  "description": "DoubleMark marketing and account web platform",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint src",
     "preview": "vite preview",
+    "security:check": "node scripts/check-secrets.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },

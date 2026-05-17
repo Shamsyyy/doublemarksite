@@ -154,10 +154,11 @@ export async function logout(): Promise<void> {
 export async function requestPasswordReset(
   email: string,
 ): Promise<{ ok: true; message: string }> {
+  const baseUrl = import.meta.env.BASE_URL;
   const redirectTo =
     typeof window === "undefined"
       ? undefined
-      : `${window.location.origin}/update-password`;
+      : new URL("update-password", `${window.location.origin}${baseUrl}`).toString();
   const { error } = await getSupabaseClient().auth.resetPasswordForEmail(
     email.trim().toLowerCase(),
     { redirectTo },

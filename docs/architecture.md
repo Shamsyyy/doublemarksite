@@ -1,38 +1,39 @@
-# DubliMarkSite — Architecture (Phase 1)
+# DoubleMark Site — Architecture (Phase 1)
 
 ## Stack
 - **UI**: React 19 + TypeScript + Vite SPA.
 - **Routing**: `react-router-dom`.
 - **State**: React context for auth session; domain logic in `src/lib/*`.
-- **Persistence (MVP)**: `localStorage` for users, entitlements, payments; `sessionStorage` for session token.
+- **Persistence**: Supabase Auth and Postgres tables for profiles, subscriptions, payments, and devices.
 - **Tests**: Vitest (unit) + Testing Library (key UI flows).
 
 ## Boundaries
 | Layer | Responsibility |
 |-------|----------------|
 | `src/content/*` | Copy, pricing plans, legal placeholders |
-| `src/lib/*` | Auth, payments, licenses, validation, cookies consent |
+| `src/lib/*` | Auth, subscriptions, payments, admin stats, validation, cookies consent |
 | `src/components/*` | Layout, cookie banner, forms, guards |
 | `src/pages/*` | Route-level screens |
 
 ## Data Entities
-- **User**: id, email, passwordHash, companyName, inn, phone, createdAt.
-- **Session**: token, userId, expiresAt.
-- **Payment**: id, userId, planId, amount, status, provider, createdAt.
-- **Entitlement**: userId, planId, status, validUntil.
+- **Profile**: id, email, companyName, inn, phone, role, createdAt.
+- **Session**: managed by Supabase Auth.
+- **Payment**: id, userId, subscriptionId, planId, amount, status, provider, createdAt.
+- **Subscription**: userId, planId, status, currentPeriodEnd, trialEndsAt, devicesLimit.
+- **Device**: userId, deviceId, deviceName, platform, lastSeenAt.
 
 ## Flows
 ### Auth
-Register → validate → store user → create session → redirect to `/account`.
+Register → validate → Supabase Auth sign-up → profile trigger → redirect to `/account`.
 
 ### Payment (sandbox)
-Select plan → checkout → `createCheckout` → user confirms → `processWebhook` → grant entitlement.
+Select plan → checkout → sandbox RPC creates payment and updates subscription. Production should replace this with a provider webhook.
 
 ### Download
-`canDownload(userId)` checks active entitlement → show Windows build link + setup docs.
+`hasActiveSubscription(userId)` checks active or trialing subscription → show Windows build link.
 
-## Future Backend (Not MVP)
-Replace `localStorage` with API + Postgres; real email, YooKassa/CloudPayments webhooks, signed desktop license keys.
+## Future Backend
+Replace sandbox checkout with YooKassa/CloudPayments webhooks and add signed desktop/mobile license checks.
 
 ## Deployment Target
 Static build (`npm run build`) on any static host; environment via `import.meta.env` when backend is added.

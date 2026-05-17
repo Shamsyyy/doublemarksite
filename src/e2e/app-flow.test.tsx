@@ -34,7 +34,7 @@ describe("app end-to-end flow", () => {
 
     await user.click(await screen.findByRole("link", { name: "Скачать приложение" }));
     expect(
-      await screen.findByRole("heading", { name: "Скачать DubliMark для Windows" }),
+      await screen.findByRole("heading", { name: "Скачать DoubleMark для Windows" }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "Скачать установщик" }),

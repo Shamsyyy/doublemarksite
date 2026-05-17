@@ -16,7 +16,7 @@ function AppMockup() {
         <span className="mockup-dot" style={{ background: '#fbbf24' }} />
         <span className="mockup-dot" style={{ background: '#34d399' }} />
         <span style={{ marginLeft: '0.75rem', fontSize: '0.75rem', color: '#5a6a84' }}>
-          DubliMark v2.1.0
+          DoubleMark v2.1.0
         </span>
       </div>
       <div className="mockup-body" style={{ display: 'flex', minHeight: '280px' }}>
