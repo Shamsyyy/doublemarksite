@@ -1,15 +1,17 @@
 # Windows installers
 
-Place the current DoubleMark setup executable here:
+Place the current build here. The file name may include a build timestamp, for example:
 
-- `DoubleMarkSetup-2.1.1.exe` — latest release (must match `public/updates/update.json` and `versions.json`)
+- `DoubleMarkSetup-2.1.1-20260521-124531.exe`
 
-After publishing a new version, move the previous installer to `public/downloads/archive/`.
+The site matches any file whose name **starts with** `DoubleMarkSetup-<version>` (same prefix as the version in `versions.json`).
 
-## SHA256 before release
+After adding `.exe` files, run:
 
-```powershell
-Get-FileHash -Algorithm SHA256 .\public\downloads\DoubleMarkSetup-2.1.1.exe
+```bash
+npm run downloads:sync
 ```
 
-Replace `PUT_SHA256_HASH_HERE` in `public/updates/update.json` and `public/updates/versions.json` before production deploy.
+This generates `manifest.json`, updates `installerUrl` / `sha256` in `update.json` and `versions.json`, and runs automatically before `npm run build`.
+
+Archive older builds in `public/downloads/archive/` with the same prefix pattern, e.g. `DoubleMarkSetup-2.1.0-*.exe`.
