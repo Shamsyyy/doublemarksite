@@ -1,17 +1,15 @@
 {
-  "version": "2.1.2",
+  "version": "2.1.3",
   "releaseDate": "2026-05-21",
   "mandatory": false,
-  "title": "DoubleMark 2.1.2",
+  "title": "DoubleMark 2.1.3",
   "notes": [
-    "DoubleMark 2.1.2 — облачная синхронизация для аккаунта",
-    "Шаблоны печати сохраняются в Supabase и доступны на любом ПК после входа",
-    "История сканирования ЧЗ в облаке (до 100 записей на пользователя), только код и диагностика, без картинок",
-    "Счётчик в истории: История X / 100, очистка истории, копирование полного кода, повторная печать",
-    "Перенос локальных шаблонов в аккаунт при первом входе",
+    "DoubleMark 2.1.3 — исправлено отображение версии и установка обновлений",
+    "Шаблоны печати и история сканов в облаке (Supabase)",
+    "Установщик закрывает приложение перед заменой файлов",
     "Проверка и установка обновлений из приложения"
   ],
-  "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.2-20260521-133428.exe",
-  "sha256": "AF362B02EAE6A1664EC76B1D2FD2D4D70D9FBCF432522A419B3956760580AFB7",
-  "minSupportedVersion": "2.1.0"
+  "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.3-20260521-141217.exe",
+  "sha256": "E7F25071A6208427F67F3C811F8B14E53CCD026D1FF9EC8E2C27D7320D2CE7D2",
+  "minSupportedVersion": "2.0.0"
 }

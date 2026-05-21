@@ -22,17 +22,17 @@ import { isSubscriptionActive, type SubscriptionRecord } from "../lib/subscripti
 import { BrandLogo } from "../components/BrandLogo";
 
 const FALLBACK_LATEST: AppVersion = {
-  version: "2.1.2",
+  version: "2.1.3",
   releaseDate: "2026-05-21",
-  title: "DoubleMark 2.1.2",
+  title: "DoubleMark 2.1.3",
   type: "latest",
   recommended: true,
   mandatory: false,
-  installerUrl: `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-2.1.2.exe`,
+  installerUrl: `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-2.1.3.exe`,
   sha256: "PUT_SHA256_HASH_HERE",
   notes: [
-    "DoubleMark 2.1.2 — облачная синхронизация для аккаунта",
-    "Шаблоны печати в Supabase, история ЧЗ в облаке",
+    "DoubleMark 2.1.3 — исправлено отображение версии и установка обновлений",
+    "Шаблоны печати и история сканов в облаке (Supabase)",
   ],
 };
 
