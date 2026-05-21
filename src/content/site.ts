@@ -60,8 +60,9 @@ export const PRODUCT_NOTES = [
   "Совместимость зависит от модели сканера и принтера.",
 ];
 
+/** @deprecated Use versions from public/updates/versions.json via appVersions.ts */
 export const DESKTOP_RELEASE = {
-  version: "0.1.0-mvp",
-  downloadUrl: "#download-windows",
-  changelog: "Первая публичная сборка: чтение ЧЗ, HID/COM, загрузка изображения.",
+  version: "2.1.1",
+  downloadUrl: "/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+  changelog: "См. public/updates/versions.json",
 };

@@ -1,0 +1,36 @@
+{
+  "latest": "2.1.1",
+  "versions": [
+    {
+      "version": "2.1.1",
+      "releaseDate": "2026-05-21",
+      "title": "DoubleMark 2.1.1",
+      "type": "latest",
+      "recommended": true,
+      "mandatory": false,
+      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+      "sha256": "PUT_SHA256_HASH_HERE",
+      "notes": [
+        "Исправлена работа HID/RawInput",
+        "Улучшена диагностика сканера",
+        "Добавлены логи ошибок",
+        "Улучшена автопечать"
+      ]
+    },
+    {
+      "version": "2.1.0",
+      "releaseDate": "2026-05-18",
+      "title": "DoubleMark 2.1.0",
+      "type": "archive",
+      "recommended": false,
+      "mandatory": false,
+      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.0.exe",
+      "sha256": "PUT_SHA256_HASH_HERE",
+      "notes": [
+        "Production-сборка",
+        "Добавлен личный кабинет",
+        "Добавлена проверка подписки"
+      ]
+    }
+  ]
+}

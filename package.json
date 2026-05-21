@@ -10,6 +10,7 @@
     "lint": "eslint src",
     "preview": "vite preview",
     "security:check": "node scripts/check-secrets.js",
+    "release:check": "node scripts/release-check.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

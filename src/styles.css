@@ -939,7 +939,8 @@ h1 {
   box-shadow: var(--shadow-lg), var(--glow);
 }
 
-.download-badge {
+.download-badge,
+.platform-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -950,7 +951,199 @@ h1 {
   font-size: 0.8rem;
   color: var(--accent);
   font-weight: 500;
+}
+
+.download-page .lead {
+  max-width: 70ch;
+}
+
+.download-history-heading {
+  margin: 2rem 0 1rem;
+  font-size: 1.35rem;
+}
+
+.download-latest-card {
   margin-bottom: 1.5rem;
+}
+
+.download-latest-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.download-latest-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.download-latest-title-row h2 {
+  margin: 0;
+}
+
+.download-version-meta {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.download-icon-accent {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.download-icon-muted {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.download-icon-success {
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.release-notes {
+  margin: 0 0 1.5rem;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.release-notes li {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.release-notes li::marker {
+  color: var(--accent);
+}
+
+.download-sha-hint,
+.version-sha-hint {
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+}
+
+.download-primary-btn {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.download-access-hint {
+  margin: 0 0 1rem;
+}
+
+.download-license-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.download-archive-section {
+  margin-bottom: 1.5rem;
+}
+
+.download-archive-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.download-archive-header h2 {
+  margin: 0 0 0.35rem;
+}
+
+.version-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.version-card {
+  padding: 1.25rem;
+}
+
+.version-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.version-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.version-card-title-row h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.version-card-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.version-notes {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.version-notes li::marker {
+  color: var(--accent);
+}
+
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.version-badge-latest {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.version-badge-archive {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--muted);
+  border: 1px solid var(--border-light);
+}
+
+.version-badge-mandatory {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.download-update-card h2 {
+  margin-top: 0;
+}
+
+.download-update-card a {
+  color: var(--accent);
 }
 
 /* ===== SCROLL ANIMATION ===== */

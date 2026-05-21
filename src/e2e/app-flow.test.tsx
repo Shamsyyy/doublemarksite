@@ -37,7 +37,7 @@ describe("app end-to-end flow", () => {
       await screen.findByRole("heading", { name: "Скачать DoubleMark для Windows" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Скачать установщик" }),
+      await screen.findByRole("link", { name: /скачать последнюю версию/i }),
     ).toBeInTheDocument();
   }, 15000);
 });

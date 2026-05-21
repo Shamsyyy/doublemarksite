@@ -342,10 +342,72 @@ class MockIntersectionObserver implements IntersectionObserver {
 
 vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
 
+const defaultVersionsManifest = {
+  latest: "2.1.1",
+  versions: [
+    {
+      version: "2.1.1",
+      releaseDate: "2026-05-21",
+      title: "DoubleMark 2.1.1",
+      type: "latest",
+      recommended: true,
+      mandatory: false,
+      installerUrl:
+        "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+      sha256: "PUT_SHA256_HASH_HERE",
+      notes: ["Исправлена работа HID/RawInput"],
+    },
+    {
+      version: "2.1.0",
+      releaseDate: "2026-05-18",
+      title: "DoubleMark 2.1.0",
+      type: "archive",
+      recommended: false,
+      mandatory: false,
+      installerUrl:
+        "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.0.exe",
+      sha256: "PUT_SHA256_HASH_HERE",
+      notes: ["Production-сборка"],
+    },
+  ],
+};
+
+const defaultUpdateManifest = {
+  version: "2.1.1",
+  releaseDate: "2026-05-21",
+  mandatory: false,
+  title: "DoubleMark 2.1.1",
+  notes: ["Исправлена работа HID/RawInput"],
+  installerUrl:
+    "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+  sha256: "PUT_SHA256_HASH_HERE",
+  minSupportedVersion: "2.1.0",
+};
+
 beforeEach(() => {
   mockSupabase.reset();
   localStorage.clear();
   sessionStorage.clear();
+
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes("versions.json")) {
+        return {
+          ok: true,
+          json: async () => defaultVersionsManifest,
+        } as Response;
+      }
+      if (url.includes("update.json")) {
+        return {
+          ok: true,
+          json: async () => defaultUpdateManifest,
+        } as Response;
+      }
+      return { ok: false, status: 404 } as Response;
+    }),
+  );
 });
 
 afterEach(() => {

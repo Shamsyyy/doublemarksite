@@ -1,0 +1,15 @@
+{
+  "version": "2.1.1",
+  "releaseDate": "2026-05-21",
+  "mandatory": false,
+  "title": "DoubleMark 2.1.1",
+  "notes": [
+    "Исправлена работа HID/RawInput",
+    "Улучшена диагностика сканера",
+    "Добавлены логи ошибок",
+    "Улучшена автопечать"
+  ],
+  "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+  "sha256": "PUT_SHA256_HASH_HERE",
+  "minSupportedVersion": "2.1.0"
+}
