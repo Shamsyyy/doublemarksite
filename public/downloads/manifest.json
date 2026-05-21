@@ -1,14 +1,21 @@
 {
-  "generatedAt": "2026-05-21T10:06:35.914Z",
+  "generatedAt": "2026-05-21T10:37:20.558Z",
   "prefix": "DoubleMarkSetup",
   "productionBaseUrl": "https://shamsyyy.github.io/doublemarksite/",
   "current": {
+    "2.1.2": {
+      "version": "2.1.2",
+      "fileName": "DoubleMarkSetup-2.1.2-20260521-133428.exe",
+      "relativePath": "downloads/DoubleMarkSetup-2.1.2-20260521-133428.exe",
+      "sha256": "AF362B02EAE6A1664EC76B1D2FD2D4D70D9FBCF432522A419B3956760580AFB7"
+    }
+  },
+  "archive": {
     "2.1.1": {
       "version": "2.1.1",
       "fileName": "DoubleMarkSetup-2.1.1-20260521-124531.exe",
-      "relativePath": "downloads/DoubleMarkSetup-2.1.1-20260521-124531.exe",
+      "relativePath": "downloads/archive/DoubleMarkSetup-2.1.1-20260521-124531.exe",
       "sha256": "7DB841DEBB388B9E8C704CB485D85B60BA5C88779F5FA386D3A15668688999A8"
     }
-  },
-  "archive": {}
+  }
 }

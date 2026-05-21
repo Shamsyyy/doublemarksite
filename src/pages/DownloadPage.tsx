@@ -12,6 +12,7 @@ import { useAuth } from "../context/useAuth";
 import { backendAdapter } from "../lib/backend/adapter";
 import {
   getInstallerDownloadUrl,
+  getInstallerFileName,
   isSha256Placeholder,
   loadUpdateManifest,
   loadVersionsManifest,
@@ -21,19 +22,17 @@ import { isSubscriptionActive, type SubscriptionRecord } from "../lib/subscripti
 import { BrandLogo } from "../components/BrandLogo";
 
 const FALLBACK_LATEST: AppVersion = {
-  version: "2.1.1",
+  version: "2.1.2",
   releaseDate: "2026-05-21",
-  title: "DoubleMark 2.1.1",
+  title: "DoubleMark 2.1.2",
   type: "latest",
   recommended: true,
   mandatory: false,
-  installerUrl: `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-2.1.1.exe`,
+  installerUrl: `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-2.1.2.exe`,
   sha256: "PUT_SHA256_HASH_HERE",
   notes: [
-    "Исправлена работа HID/RawInput",
-    "Улучшена диагностика сканера",
-    "Добавлены логи ошибок",
-    "Улучшена автопечать",
+    "DoubleMark 2.1.2 — облачная синхронизация для аккаунта",
+    "Шаблоны печати в Supabase, история ЧЗ в облаке",
   ],
 };
 
@@ -64,6 +63,7 @@ export function DownloadPage() {
   const [isVersionsLoading, setIsVersionsLoading] = useState(true);
   const [isAccessLoading, setIsAccessLoading] = useState(true);
   const [accessError, setAccessError] = useState<string | null>(null);
+  const [installerLinks, setInstallerLinks] = useState<Record<string, string>>({});
   const userId = user?.id;
 
   useEffect(() => {
@@ -157,6 +157,37 @@ export function DownloadPage() {
     };
   }, [userId]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    async function resolveInstallerLinks() {
+      const versions = [
+        ...(latestVersion ? [latestVersion] : []),
+        ...archivedVersions,
+      ];
+      if (versions.length === 0) {
+        return;
+      }
+
+      const entries = await Promise.all(
+        versions.map(async (version) => [
+          version.version,
+          await getInstallerDownloadUrl(version),
+        ] as const),
+      );
+
+      if (isMounted) {
+        setInstallerLinks(Object.fromEntries(entries));
+      }
+    }
+
+    void resolveInstallerLinks();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [latestVersion, archivedVersions]);
+
   const allowed = useMemo(
     () => isSubscriptionActive(subscription),
     [subscription],
@@ -168,8 +199,8 @@ export function DownloadPage() {
   }
 
   const latestInstallerUrl = latestVersion
-    ? getInstallerDownloadUrl(latestVersion)
-    : `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-2.1.1.exe`;
+    ? installerLinks[latestVersion.version]
+    : undefined;
 
   return (
     <section className="section download-page">
@@ -230,14 +261,18 @@ export function DownloadPage() {
                   <p className="error" role="alert">{accessError}</p>
                 ) : allowed ? (
                   <>
-                    <a
-                      className="btn btn-primary download-primary-btn"
-                      href={latestInstallerUrl}
-                      download={`DoubleMarkSetup-${latestVersion.version}.exe`}
-                    >
-                      <Download size={18} />
-                      Скачать последнюю версию
-                    </a>
+                    {latestInstallerUrl ? (
+                      <a
+                        className="btn btn-primary download-primary-btn"
+                        href={latestInstallerUrl}
+                        download={getInstallerFileName(latestVersion, latestInstallerUrl)}
+                      >
+                        <Download size={18} />
+                        Скачать последнюю версию
+                      </a>
+                    ) : (
+                      <p className="muted">Подготавливаем ссылку на установщик...</p>
+                    )}
                     <div className="download-license-status">
                       <CheckCircle2 size={14} className="download-icon-success" />
                       <span>
@@ -289,14 +324,21 @@ export function DownloadPage() {
                           {version.releaseDate && <> · {formatDate(version.releaseDate)}</>}
                         </p>
                       </div>
-                      <a
-                        className="btn btn-secondary btn-small"
-                        href={getInstallerDownloadUrl(version)}
-                        download={`DoubleMarkSetup-${version.version}.exe`}
-                      >
-                        <Download size={16} />
-                        Скачать
-                      </a>
+                      {installerLinks[version.version] ? (
+                        <a
+                          className="btn btn-secondary btn-small"
+                          href={installerLinks[version.version]}
+                          download={getInstallerFileName(
+                            version,
+                            installerLinks[version.version],
+                          )}
+                        >
+                          <Download size={16} />
+                          Скачать
+                        </a>
+                      ) : (
+                        <span className="muted btn-small">…</span>
+                      )}
                     </div>
                     <ul className="version-notes">
                       {version.notes.slice(0, 2).map((note) => (

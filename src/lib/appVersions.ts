@@ -1,3 +1,10 @@
+import {
+  fallbackInstallerRelativePath,
+  loadDownloadsManifest,
+  resolveInstallerRelativePath,
+  toAbsoluteInstallerUrl,
+} from "./installerFiles";
+
 export type AppVersionType = "latest" | "archive";
 
 export type AppVersion = {
@@ -38,16 +45,6 @@ function manifestUrl(path: string): string {
 const VERSIONS_URL = manifestUrl("updates/versions.json");
 const UPDATE_URL = manifestUrl("updates/update.json");
 
-function resolveInstallerUrl(url: string): string {
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    return url;
-  }
-  if (url.startsWith("/")) {
-    return `${window.location.origin}${url}`;
-  }
-  return new URL(url, window.location.href).toString();
-}
-
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) {
@@ -85,8 +82,38 @@ export async function getArchivedVersions(): Promise<AppVersion[]> {
   return manifest.versions.filter((entry) => entry.type === "archive");
 }
 
-export function getInstallerDownloadUrl(version: AppVersion): string {
-  return resolveInstallerUrl(version.installerUrl);
+export async function getInstallerDownloadUrl(version: AppVersion): Promise<string> {
+  const downloadsManifest = await loadDownloadsManifest();
+  const relative =
+    resolveInstallerRelativePath(version.version, version.type, downloadsManifest) ??
+    fallbackInstallerRelativePath(version.version, version.type);
+
+  if (downloadsManifest) {
+    return toAbsoluteInstallerUrl(relative);
+  }
+
+  if (version.installerUrl.startsWith("http://") || version.installerUrl.startsWith("https://")) {
+    const fileName = relative.split("/").pop() ?? "";
+    try {
+      const parsed = new URL(version.installerUrl);
+      const segments = parsed.pathname.split("/");
+      segments[segments.length - 1] = fileName;
+      parsed.pathname = segments.join("/");
+      return parsed.toString();
+    } catch {
+      return version.installerUrl;
+    }
+  }
+
+  return toAbsoluteInstallerUrl(relative);
+}
+
+export function getInstallerFileName(version: AppVersion, resolvedUrl: string): string {
+  const fromManifest = resolvedUrl.split("/").pop();
+  if (fromManifest?.toLowerCase().endsWith(".exe")) {
+    return fromManifest;
+  }
+  return `DoubleMarkSetup-${version.version}.exe`;
 }
 
 export function isSha256Placeholder(sha256: string): boolean {

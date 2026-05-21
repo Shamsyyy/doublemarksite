@@ -3,12 +3,13 @@
  * Pre-release checks for DoubleMark app update files.
  * Run: npm run release:check
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(root, "..");
+const PREFIX = "DoubleMarkSetup";
 
 const FORBIDDEN = [
   "shamsyy.github.io",
@@ -41,9 +42,27 @@ function grepForbidden(text, label) {
   }
 }
 
+function findByPrefix(dir, version) {
+  if (!existsSync(dir)) {
+    return null;
+  }
+  const needle = `${PREFIX}-${version}`;
+  const matches = readdirSync(dir)
+    .filter((name) => name.toLowerCase().endsWith(".exe"))
+    .filter(
+      (name) =>
+        name.startsWith(needle) &&
+        (name.length === needle.length + 4 || name[needle.length] === "-"),
+    )
+    .map((fileName) => join(dir, fileName));
+
+  return matches[0] ?? null;
+}
+
 function main() {
   const updatePath = join(projectRoot, "public/updates/update.json");
   const versionsPath = join(projectRoot, "public/updates/versions.json");
+  const manifestPath = join(projectRoot, "public/downloads/manifest.json");
 
   if (!existsSync(updatePath)) {
     fail("Missing public/updates/update.json");
@@ -74,7 +93,7 @@ function main() {
   }
 
   if (update.sha256 === "PUT_SHA256_HASH_HERE") {
-    warn("update.json sha256 is still PUT_SHA256_HASH_HERE — replace before production");
+    warn("update.json sha256 is still PUT_SHA256_HASH_HERE — run npm run downloads:sync after adding .exe");
   }
 
   for (const entry of versions.versions) {
@@ -86,12 +105,20 @@ function main() {
     }
   }
 
-  const installerName = `DoubleMarkSetup-${update.version}.exe`;
-  const installerPath = join(projectRoot, "public/downloads", installerName);
-  if (!existsSync(installerPath)) {
+  const downloadsDir = join(projectRoot, "public/downloads");
+  const archiveDir = join(projectRoot, "public/downloads/archive");
+  const latestFile =
+    findByPrefix(downloadsDir, update.version) ??
+    (existsSync(manifestPath)
+      ? readJson("public/downloads/manifest.json").current?.[update.version]?.fileName
+      : null);
+
+  if (!latestFile) {
     warn(
-      `Installer not found at public/downloads/${installerName} — upload before deploy (see public/downloads/README.md)`,
+      `No installer matching prefix ${PREFIX}-${update.version} in public/downloads/ — add .exe and run npm run downloads:sync`,
     );
+  } else if (typeof latestFile === "string" && !existsSync(join(downloadsDir, latestFile))) {
+    warn(`Manifest references missing file: ${latestFile}`);
   }
 
   if (failed) {

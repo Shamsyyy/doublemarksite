@@ -6,7 +6,8 @@
   "description": "DoubleMark marketing and account web platform",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "downloads:sync": "node scripts/sync-download-manifest.mjs",
+    "build": "npm run downloads:sync && tsc -b && vite build",
     "lint": "eslint src",
     "preview": "vite preview",
     "security:check": "node scripts/check-secrets.js",

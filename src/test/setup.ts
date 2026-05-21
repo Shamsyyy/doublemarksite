@@ -372,6 +372,28 @@ const defaultVersionsManifest = {
   ],
 };
 
+const defaultDownloadsManifest = {
+  generatedAt: new Date().toISOString(),
+  prefix: "DoubleMarkSetup",
+  productionBaseUrl: "https://shamsyyy.github.io/doublemarksite/",
+  current: {
+    "2.1.1": {
+      version: "2.1.1",
+      fileName: "DoubleMarkSetup-2.1.1-20260521-124531.exe",
+      relativePath: "downloads/DoubleMarkSetup-2.1.1-20260521-124531.exe",
+      sha256: "abc123",
+    },
+  },
+  archive: {
+    "2.1.0": {
+      version: "2.1.0",
+      fileName: "DoubleMarkSetup-2.1.0.exe",
+      relativePath: "downloads/archive/DoubleMarkSetup-2.1.0.exe",
+      sha256: "def456",
+    },
+  },
+};
+
 const defaultUpdateManifest = {
   version: "2.1.1",
   releaseDate: "2026-05-21",
@@ -393,6 +415,12 @@ beforeEach(() => {
     "fetch",
     vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
+      if (url.includes("downloads/manifest.json")) {
+        return {
+          ok: true,
+          json: async () => defaultDownloadsManifest,
+        } as Response;
+      }
       if (url.includes("versions.json")) {
         return {
           ok: true,

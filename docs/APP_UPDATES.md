@@ -6,27 +6,28 @@
 powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
 ```
 
-Ожидаемый артефакт: `dist/installer/DoubleMarkSetup-2.1.1.exe`
+Артефакт может называться, например: `DoubleMarkSetup-2.1.1-20260521-124531.exe`
 
-## 2. SHA256
+## 2. Разместить файлы на сайте
 
-```powershell
-Get-FileHash -Algorithm SHA256 .\public\downloads\DoubleMarkSetup-2.1.1.exe
+- Актуальная версия: `public/downloads/DoubleMarkSetup-2.1.1-*.exe` (любой суффикс после версии)
+- Архив: `public/downloads/archive/DoubleMarkSetup-2.1.0-*.exe`
+
+## 3. Синхронизировать манифест
+
+```bash
+npm run downloads:sync
 ```
 
-## 3. Разместить файлы на сайте
+Скрипт находит файлы по префиксу `DoubleMarkSetup-<version>`, считает SHA256 и обновляет:
 
-- Актуальная версия: `public/downloads/DoubleMarkSetup-2.1.1.exe`
-- Предыдущую актуальную перенести в: `public/downloads/archive/DoubleMarkSetup-2.1.0.exe`
+- `public/downloads/manifest.json`
+- `public/updates/update.json`
+- `public/updates/versions.json`
 
-## 4. Обновить JSON
+`npm run build` запускает `downloads:sync` автоматически.
 
-- `public/updates/update.json` — поле `version`, `installerUrl`, `sha256`, `notes`
-- `public/updates/versions.json` — `latest` и массив `versions` (актуальная + архив)
-
-`latest` в `versions.json` должен совпадать с `version` в `update.json`.
-
-## 5. Проверка перед push
+## 4. Проверка перед push
 
 ```bash
 npm run build
@@ -34,21 +35,21 @@ npm run test
 npm run release:check
 ```
 
-## 6. Проверка URL после deploy
+## 5. Проверка URL после deploy
 
 - https://shamsyyy.github.io/doublemarksite/updates/update.json
-- https://shamsyyy.github.io/doublemarksite/updates/versions.json
-- https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe
-- https://shamsyyy.github.io/doublemarksite/download (страница скачивания)
+- https://shamsyyy.github.io/doublemarksite/downloads/manifest.json
+- ссылка из `installerUrl` в `update.json` (имя файла с датой, если так собрано)
+- https://shamsyyy.github.io/doublemarksite/download
 
-## 7. Git
+## 6. Git и deploy
 
 ```bash
-git add public/downloads public/updates src/lib/appVersions.ts src/pages/DownloadPage.tsx src/styles.css docs APP_UPDATES.md
-git commit -m "feat: app versions, download page, and update manifests for GitHub Pages"
+git add public/downloads public/updates
+git commit -m "chore: publish DoubleMark app update"
 git push origin main
 ```
 
-## 8. Проверка из приложения
+## 7. Проверка из приложения
 
-После зелёного GitHub Actions deploy — проверить автообновление по `update.json` и скачивание с сайта.
+После зелёного GitHub Actions — проверить автообновление по `update.json`.
