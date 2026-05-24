@@ -45,6 +45,15 @@ function findByPrefix(dir, version) {
   return matches[0] ?? null;
 }
 
+function listCurrentInstallers(downloadsDir) {
+  if (!existsSync(downloadsDir)) {
+    return [];
+  }
+  return readdirSync(downloadsDir)
+    .filter((name) => name.toLowerCase().endsWith(".exe"))
+    .filter((name) => name.startsWith(`${PREFIX}-`));
+}
+
 function entryFor(version, dir, folder) {
   const hit = findByPrefix(dir, version);
   if (!hit) {
@@ -70,6 +79,67 @@ function writeJson(rel, data) {
   writeFileSync(join(projectRoot, rel), `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
+function normalizeGithubUrl(url) {
+  if (!url || typeof url !== "string") {
+    return url;
+  }
+  return url
+    .replace("https://doublemark.ru/", PRODUCTION_BASE)
+    .replace("http://doublemark.ru/", PRODUCTION_BASE);
+}
+
+function alignVersionsWithUpdate(versions, update) {
+  if (!update?.version) {
+    return;
+  }
+
+  const updateVersion = String(update.version).trim();
+  if (versions.latest === updateVersion) {
+    return;
+  }
+
+  console.warn(
+    `WARN: versions.json latest=${versions.latest}, update.json version=${updateVersion} — выравниваем`,
+  );
+
+  for (const item of versions.versions) {
+    if (item.type === "latest") {
+      item.type = "archive";
+      item.recommended = false;
+    }
+  }
+
+  let entry = versions.versions.find((item) => item.version === updateVersion);
+  if (!entry) {
+    entry = {
+      version: updateVersion,
+      releaseDate: update.releaseDate ?? new Date().toISOString().slice(0, 10),
+      title: update.title ?? `DoubleMark ${updateVersion}`,
+      type: "latest",
+      recommended: true,
+      mandatory: Boolean(update.mandatory),
+      installerUrl: "",
+      sha256: String(update.sha256 ?? "PUT_SHA256_HASH_HERE").toUpperCase(),
+      notes: Array.isArray(update.notes) ? update.notes : [],
+    };
+    versions.versions.unshift(entry);
+  } else {
+    entry.type = "latest";
+    entry.recommended = true;
+    if (Array.isArray(update.notes) && update.notes.length > 0) {
+      entry.notes = update.notes;
+    }
+    if (update.releaseDate) {
+      entry.releaseDate = update.releaseDate;
+    }
+    if (update.title) {
+      entry.title = update.title;
+    }
+  }
+
+  versions.latest = updateVersion;
+}
+
 function main() {
   const downloadsDir = join(projectRoot, "public/downloads");
   const archiveDir = join(projectRoot, "public/downloads/archive");
@@ -84,10 +154,27 @@ function main() {
     archive: {},
   };
 
+  let update = null;
+  if (existsSync(updatePath)) {
+    update = readJson("public/updates/update.json");
+    update.installerUrl = normalizeGithubUrl(update.installerUrl ?? update.downloadUrl);
+    if (update.downloadUrl) {
+      update.downloadUrl = normalizeGithubUrl(update.downloadUrl);
+    }
+    if (update.sha256) {
+      update.sha256 = String(update.sha256).toUpperCase();
+    }
+  }
+
   if (existsSync(versionsPath)) {
     const versions = readJson("public/updates/versions.json");
+    if (update) {
+      alignVersionsWithUpdate(versions, update);
+    }
+
     for (const item of versions.versions) {
-      const scope = item.type === "archive" ? "archive" : "current";
+      const scope = item.version === versions.latest ? "current" : "archive";
+      item.type = item.version === versions.latest ? "latest" : "archive";
       const dir = scope === "archive" ? archiveDir : downloadsDir;
       const entry = entryFor(item.version, dir, scope);
       if (entry) {
@@ -99,15 +186,17 @@ function main() {
     writeJson("public/updates/versions.json", versions);
 
     const latest = versions.versions.find((v) => v.version === versions.latest);
-    if (latest && manifest.current[versions.latest]) {
-      const update = existsSync(updatePath)
-        ? readJson("public/updates/update.json")
-        : null;
-      if (update) {
-        update.installerUrl = latest.installerUrl;
-        update.sha256 = latest.sha256;
-        writeJson("public/updates/update.json", update);
+    if (latest && manifest.current[versions.latest] && update) {
+      update.version = versions.latest;
+      update.installerUrl = latest.installerUrl;
+      update.sha256 = latest.sha256;
+      if (!update.releaseDate && latest.releaseDate) {
+        update.releaseDate = latest.releaseDate;
       }
+      if (!update.title && latest.title) {
+        update.title = latest.title;
+      }
+      writeJson("public/updates/update.json", update);
     }
   }
 
@@ -118,6 +207,20 @@ function main() {
   console.log(
     `downloads manifest: current=${currentCount}, archive=${archiveCount} (prefix ${PREFIX}-<version>)`,
   );
+
+  if (currentCount === 0 && existsSync(versionsPath)) {
+    const versions = readJson("public/updates/versions.json");
+    const onDisk = listCurrentInstallers(downloadsDir);
+    console.warn(
+      `WARN: нет current для latest=${versions.latest} в public/downloads/`,
+    );
+    if (onDisk.length > 0) {
+      console.warn(`      на диске: ${onDisk.join(", ")}`);
+      console.warn("      обновите update.json version или положите нужный .exe в downloads/");
+    } else {
+      console.warn("      положите DoubleMarkSetup-<version>*.exe в public/downloads/");
+    }
+  }
 }
 
 main();

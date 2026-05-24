@@ -1,16 +1,16 @@
 {
-  "version": "2.1.4",
+  "version": "2.1.5",
   "releaseDate": "2026-05-24",
   "mandatory": false,
-  "title": "DoubleMark 2.1.4",
+  "title": "DoubleMark 2.1.5",
   "notes": [
-    "DoubleMark 2.1.4 — безопасное распространение для Windows",
-    "Проверка обновлений: HTTPS manifest, SHA-256 и Authenticode",
-    "Установщик без прав администратора, локальная история до 100 кодов",
-    "Исправлена сборка release-скриптов",
-    "Build ID: 20260524-174546"
+    "DoubleMark 2.1.5 — автообновление без цифровой подписи",
+    "Проверка обновления по SHA-256 (requireSignature: false)",
+    "Снятие метки «из интернета» перед запуском установщика",
+    "Build ID: 20260524-181558"
   ],
-  "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.4.exe",
-  "sha256": "A0AD9000312F9F22FA20B8FDADBA85B11FD29B2F0309BC39567F5032BA6723B1",
-  "minSupportedVersion": "2.0.0"
+  "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.5.exe",
+  "sha256": "2E379256A85E09C84DAF1345890B8CE50E64C9BF0602A3DF8665CCD8A4803C2E",
+  "minSupportedVersion": "2.0.0",
+  "requireSignature": false
 }
