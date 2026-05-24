@@ -1,14 +1,31 @@
 {
-  "latest": "2.1.3",
+  "latest": "2.1.4",
   "versions": [
+    {
+      "version": "2.1.4",
+      "releaseDate": "2026-05-24",
+      "title": "DoubleMark 2.1.4",
+      "type": "latest",
+      "recommended": true,
+      "mandatory": false,
+      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.4.exe",
+      "sha256": "A0AD9000312F9F22FA20B8FDADBA85B11FD29B2F0309BC39567F5032BA6723B1",
+      "notes": [
+        "DoubleMark 2.1.4 — безопасное распространение для Windows",
+        "Проверка обновлений: HTTPS manifest, SHA-256 и Authenticode",
+        "Установщик без прав администратора, локальная история до 100 кодов",
+        "Исправлена сборка release-скриптов",
+        "Build ID: 20260524-174546"
+      ]
+    },
     {
       "version": "2.1.3",
       "releaseDate": "2026-05-21",
       "title": "DoubleMark 2.1.3",
-      "type": "latest",
-      "recommended": true,
+      "type": "archive",
+      "recommended": false,
       "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.3-20260521-141217.exe",
+      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.3-20260521-141217.exe",
       "sha256": "E7F25071A6208427F67F3C811F8B14E53CCD026D1FF9EC8E2C27D7320D2CE7D2",
       "notes": [
         "DoubleMark 2.1.3 — исправлено отображение версии и установка обновлений",
@@ -29,9 +46,7 @@
       "notes": [
         "DoubleMark 2.1.2 — облачная синхронизация для аккаунта",
         "Шаблоны печати сохраняются в Supabase и доступны на любом ПК после входа",
-        "История сканирования ЧЗ в облаке (до 100 записей на пользователя), только код и диагностика, без картинок",
-        "Счётчик в истории: История X / 100, очистка истории, копирование полного кода, повторная печать",
-        "Перенос локальных шаблонов в аккаунт при первом входе",
+        "История сканирования ЧЗ в облаке (до 100 записей на пользователя)",
         "Проверка и установка обновлений из приложения"
       ]
     },
