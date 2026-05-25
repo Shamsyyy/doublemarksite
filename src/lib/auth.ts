@@ -54,23 +54,27 @@ export function getAuthCallbackUrl(): string | undefined {
 }
 
 async function getProfile(userId: string): Promise<ProfileRow | null> {
-  const { data, error } = await getSupabaseClient()
-    .from("profiles")
-    .select("id,email,company_name,inn,phone,role,created_at")
-    .eq("id", userId)
-    .maybeSingle();
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("profiles")
+      .select("id,email,company_name,inn,phone,role,created_at")
+      .eq("id", userId)
+      .maybeSingle();
 
-  if (error) {
-    if (
-      error.message.includes("public.profiles") ||
-      error.message.includes("schema cache")
-    ) {
+    if (error) {
+      // Не блокируем вход: профиль может отсутствовать или быть временно недоступен.
+      console.warn("Profile fetch:", error.message);
       return null;
     }
-    throw new Error(error.message);
-  }
 
-  return (data as ProfileRow | null) ?? null;
+    return (data as ProfileRow | null) ?? null;
+  } catch (error) {
+    console.warn(
+      "Profile fetch failed:",
+      error instanceof Error ? error.message : error,
+    );
+    return null;
+  }
 }
 
 async function toPublicUser(user: User): Promise<PublicUser> {
@@ -128,13 +132,45 @@ export async function login(input: {
   }
 
   const email = input.email.trim().toLowerCase();
-  const { data, error } = await getSupabaseClient().auth.signInWithPassword({
-    email,
-    password: input.password,
-  });
+  let data;
+  let error;
+  try {
+    const result = await getSupabaseClient().auth.signInWithPassword({
+      email,
+      password: input.password,
+    });
+    data = result.data;
+    error = result.error;
+  } catch (networkError) {
+    const message =
+      networkError instanceof Error ? networkError.message : String(networkError);
+    if (message.toLowerCase().includes("fetch") || message.toLowerCase().includes("network")) {
+      throw new Error(
+        "Нет связи с сервером входа (Supabase). Проверьте интернет. Если ошибка повторяется — включите VPN или проверьте, не блокируется ли supabase.co провайдером или антивирусом.",
+      );
+    }
+    throw networkError;
+  }
 
   if (error || !data.user || !data.session) {
-    throw new Error(error?.message ?? "Invalid credentials");
+    const message = error?.message ?? "Invalid credentials";
+    if (
+      message.toLowerCase().includes("failed to fetch") ||
+      message.toLowerCase().includes("network")
+    ) {
+      throw new Error(
+        "Нет связи с сервером входа (Supabase). Проверьте интернет. Если ошибка повторяется — включите VPN или проверьте, не блокируется ли supabase.co провайдером или антивирусом.",
+      );
+    }
+    if (message.toLowerCase().includes("email not confirmed")) {
+      throw new Error(
+        "Подтвердите email по ссылке из письма, затем войдите снова.",
+      );
+    }
+    if (message.toLowerCase().includes("invalid login credentials")) {
+      throw new Error("Неверный email или пароль.");
+    }
+    throw new Error(message);
   }
 
   const publicUser = await toPublicUser(data.user);

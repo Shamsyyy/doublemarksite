@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "downloads:sync": "node scripts/sync-download-manifest.mjs",
-    "build": "npm run downloads:sync && tsc -b && vite build",
+    "build": "npm run downloads:sync && tsc -b && vite build && node scripts/spa-github-pages.mjs",
     "lint": "eslint src",
     "preview": "vite preview",
     "security:check": "node scripts/check-secrets.js",

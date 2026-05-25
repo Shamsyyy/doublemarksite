@@ -41,7 +41,9 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Add SPA fallback
-        run: cp dist/index.html dist/404.html
+        run: node scripts/spa-github-pages.mjs
+        env:
+          VITE_BASE_PATH: /doublemarksite/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
