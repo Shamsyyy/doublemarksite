@@ -18,6 +18,18 @@ import {
 } from "../subscriptions";
 import type { RegistrationInput } from "../validation";
 import type { PlanId } from "../../content/pricing";
+import { isLocalApiBackend } from "../api/client";
+import {
+  localGetCurrentSubscription,
+  localGetCurrentUser,
+  localGetUserPayments,
+  localHasActiveSubscription,
+  localLogin,
+  localLogout,
+  localProcessSandboxCheckout,
+  localRegister,
+  localRequestPasswordReset,
+} from "../api/localAuth";
 
 export type PaymentOutcome = "succeeded" | "failed";
 
@@ -49,4 +61,34 @@ export const supabaseBackendAdapter: BackendAdapter = {
   getActiveEntitlement: getCurrentSubscription,
 };
 
-export const backendAdapter: BackendAdapter = supabaseBackendAdapter;
+export const localApiBackendAdapter: BackendAdapter = {
+  getCurrentUser: localGetCurrentUser,
+  login: localLogin,
+  register: localRegister,
+  logout: localLogout,
+  requestPasswordReset: async () => localRequestPasswordReset(),
+  processPaymentOutcome: async (userId, planId, outcome) => {
+    if (outcome !== "succeeded") {
+      return {
+        id: crypto.randomUUID(),
+        userId,
+        subscriptionId: null,
+        planId,
+        amount: 0,
+        currency: "RUB",
+        status: "failed",
+        provider: "local-api",
+        providerPaymentId: null,
+        createdAt: new Date().toISOString(),
+      };
+    }
+    return localProcessSandboxCheckout(userId, planId);
+  },
+  getPaymentsForUser: localGetUserPayments,
+  hasActiveLicense: localHasActiveSubscription,
+  getActiveEntitlement: localGetCurrentSubscription,
+};
+
+export const backendAdapter: BackendAdapter = isLocalApiBackend()
+  ? localApiBackendAdapter
+  : supabaseBackendAdapter;

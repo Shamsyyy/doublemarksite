@@ -5,12 +5,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import {
-  type PublicUser,
-} from "../lib/auth";
+import { type PublicUser } from "../lib/auth";
 import type { RegistrationInput } from "../lib/validation";
 import { AuthContext } from "./auth-context";
 import { backendAdapter } from "../lib/backend/adapter";
+import { isLocalApiBackend } from "../lib/api/client";
 import { getSupabaseClient } from "../lib/supabase/client";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -40,13 +39,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void syncUser();
 
     let unsubscribe: (() => void) | undefined;
-    try {
-      const { data } = getSupabaseClient().auth.onAuthStateChange(() => {
-        void syncUser();
-      });
-      unsubscribe = () => data.subscription.unsubscribe();
-    } catch {
-      // Supabase may be unconfigured during local setup; initial syncUser handles state.
+    if (!isLocalApiBackend()) {
+      try {
+        const { data } = getSupabaseClient().auth.onAuthStateChange(() => {
+          void syncUser();
+        });
+        unsubscribe = () => data.subscription.unsubscribe();
+      } catch {
+        // Supabase may be unconfigured during local setup.
+      }
     }
 
     return () => {
@@ -55,13 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(
-    async (email: string, password: string) => {
-      const session = await backendAdapter.login({ email, password });
-      setUser(session.user);
-    },
-    [],
-  );
+  const login = useCallback(async (email: string, password: string) => {
+    const session = await backendAdapter.login({ email, password });
+    setUser(session.user);
+  }, []);
 
   const register = useCallback(async (input: RegistrationInput) => {
     const result = await backendAdapter.register(input);

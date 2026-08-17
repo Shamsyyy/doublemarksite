@@ -6,7 +6,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth();
   const location = useLocation();
   if (isLoading) {
-    return null;
+    return <p className="muted" style={{ padding: "2rem", textAlign: "center" }}>Загрузка...</p>;
   }
   if (!user) {
     const from = `${location.pathname}${location.search}${location.hash}`;
