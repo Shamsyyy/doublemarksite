@@ -27,11 +27,30 @@ describe("validation", () => {
       inn: "7707083893",
       phone: "",
       consent: false,
+      acceptOffer: false,
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.errors).toContain("password");
       expect(result.errors).toContain("consent");
+      expect(result.errors).toContain("acceptOffer");
+    }
+  });
+
+  it("rejects mismatched password confirmation", () => {
+    const result = validateRegistration({
+      email: "owner@example.com",
+      password: "longenough",
+      passwordConfirm: "different",
+      companyName: "ООО Пример",
+      inn: "",
+      phone: "",
+      consent: true,
+      acceptOffer: true,
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toContain("passwordConfirm");
     }
   });
 });

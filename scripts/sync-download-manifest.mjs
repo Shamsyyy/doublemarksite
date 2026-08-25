@@ -16,8 +16,9 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(scriptDir, "..");
+import { PRODUCTION_BASE } from "./site-config.mjs";
+
 const PREFIX = "DoubleMarkSetup";
-const PRODUCTION_BASE = "https://shamsyyy.github.io/doublemarksite/";
 
 function sha256File(path) {
   const data = readFileSync(path);
@@ -72,18 +73,21 @@ function entryFor(version, dir, folder) {
 }
 
 function readJson(rel) {
-  return JSON.parse(readFileSync(join(projectRoot, rel), "utf8"));
+  const raw = readFileSync(join(projectRoot, rel), "utf8").replace(/^\uFEFF/, "");
+  return JSON.parse(raw);
 }
 
 function writeJson(rel, data) {
   writeFileSync(join(projectRoot, rel), `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
-function normalizeGithubUrl(url) {
+function normalizeProductionUrl(url) {
   if (!url || typeof url !== "string") {
     return url;
   }
   return url
+    .replace("https://shamsyyy.github.io/doublemarksite/", PRODUCTION_BASE)
+    .replace("http://shamsyyy.github.io/doublemarksite/", PRODUCTION_BASE)
     .replace("https://doublemark.ru/", PRODUCTION_BASE)
     .replace("http://doublemark.ru/", PRODUCTION_BASE);
 }
@@ -157,9 +161,9 @@ function main() {
   let update = null;
   if (existsSync(updatePath)) {
     update = readJson("public/updates/update.json");
-    update.installerUrl = normalizeGithubUrl(update.installerUrl ?? update.downloadUrl);
+    update.installerUrl = normalizeProductionUrl(update.installerUrl ?? update.downloadUrl);
     if (update.downloadUrl) {
-      update.downloadUrl = normalizeGithubUrl(update.downloadUrl);
+      update.downloadUrl = normalizeProductionUrl(update.downloadUrl);
     }
     if (update.sha256) {
       update.sha256 = String(update.sha256).toUpperCase();
@@ -173,22 +177,52 @@ function main() {
     }
 
     for (const item of versions.versions) {
-      const scope = item.version === versions.latest ? "current" : "archive";
-      item.type = item.version === versions.latest ? "latest" : "archive";
-      const dir = scope === "archive" ? archiveDir : downloadsDir;
-      const entry = entryFor(item.version, dir, scope);
+      const isLatest = item.version === versions.latest;
+      item.type = isLatest ? "latest" : "archive";
+      item.recommended = isLatest;
+      if (!isLatest) {
+        item.mandatory = false;
+      }
+
+      const folder = isLatest ? "current" : "archive";
+      const dir = isLatest ? downloadsDir : archiveDir;
+      const entry = entryFor(item.version, dir, folder);
       if (entry) {
-        manifest[scope][item.version] = entry;
+        if (isLatest) {
+          manifest.current[item.version] = entry;
+        } else {
+          manifest.archive[item.version] = entry;
+        }
         item.installerUrl = `${PRODUCTION_BASE}${entry.relativePath}`;
         item.sha256 = entry.sha256;
+      } else {
+        // Fallback: archive entry may still sit in downloads/ root from older publishes.
+        if (!isLatest) {
+          const rootEntry = entryFor(item.version, downloadsDir, "current");
+          if (rootEntry) {
+            manifest.archive[item.version] = {
+              ...rootEntry,
+              relativePath: `downloads/${rootEntry.fileName}`,
+            };
+            item.installerUrl = `${PRODUCTION_BASE}downloads/${rootEntry.fileName}`;
+            item.sha256 = rootEntry.sha256;
+            continue;
+          }
+        }
+        item.installerUrl = normalizeProductionUrl(item.installerUrl ?? "");
       }
     }
+
+    versions.versions.sort((a, b) =>
+      String(b.version).localeCompare(String(a.version), undefined, { numeric: true }),
+    );
     writeJson("public/updates/versions.json", versions);
 
     const latest = versions.versions.find((v) => v.version === versions.latest);
     if (latest && manifest.current[versions.latest] && update) {
       update.version = versions.latest;
       update.installerUrl = latest.installerUrl;
+      update.downloadUrl = latest.installerUrl;
       update.sha256 = latest.sha256;
       if (!update.releaseDate && latest.releaseDate) {
         update.releaseDate = latest.releaseDate;

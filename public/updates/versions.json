@@ -1,117 +1,68 @@
 {
-  "latest": "2.1.6",
+  "latest": "3.0.3",
   "versions": [
     {
-      "version": "2.1.6",
-      "releaseDate": "2026-05-25",
-      "title": "DoubleMark 2.1.6",
+      "version": "3.0.3",
+      "releaseDate": "2026-08-25",
+      "title": "DoubleMark 3.0.3",
       "type": "latest",
       "recommended": true,
-      "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.6.exe",
-      "sha256": "E4290292355CC1C2E9D681908D25D7346F600F892C46AD6D85A77FFDBC9C368A",
+      "mandatory": true,
+      "installerUrl": "https://doublemark.ru/downloads/DoubleMarkSetup-3.0.3.exe",
+      "sha256": "097F4B4E8DA3025A3E0C068AAB2A533E56B80F0B4B8B0DABDB3EF96DE2ED441C",
       "notes": [
-        "DoubleMark 2.1.6 — редактор шаблонов и улучшенный рендер текста на этикетке",
-        "Визуальный макет шаблона (TemplateLayoutCanvas)",
-        "Обновлённый предпросмотр и печать текстовых блоков",
-        "Автообновление по SHA-256 (requireSignature: false)",
-        "Build ID: 20260525-223846"
+        "DoubleMark 3.0.3 — показ пароля при входе",
+        "Кнопка «Показать/Скрыть» на экране входа в приложение",
+        "Сайт: мгновенная проверка совпадения паролей при регистрации",
+        "Сайт: показ пароля на странице входа",
+        "Build ID: 20260825-144147"
       ]
     },
     {
-      "version": "2.1.5",
-      "releaseDate": "2026-05-24",
-      "title": "DoubleMark 2.1.5",
+      "version": "3.0.2",
+      "releaseDate": "2026-08-24",
+      "title": "DoubleMark 3.0.2",
       "type": "archive",
       "recommended": false,
       "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.5.exe",
-      "sha256": "2E379256A85E09C84DAF1345890B8CE50E64C9BF0602A3DF8665CCD8A4803C2E",
+      "installerUrl": "https://doublemark.ru/downloads/archive/DoubleMarkSetup-3.0.2.exe",
+      "sha256": "F020C73652890ED08253A90FCB62D7F7DA68E0AD16598B2F783384AC49D5E94B",
       "notes": [
-        "DoubleMark 2.1.5 — автообновление без цифровой подписи",
-        "Проверка обновления по SHA-256 (requireSignature: false)",
-        "Снятие метки «из интернета» перед запуском установщика",
-        "Build ID: 20260524-181558"
+        "DoubleMark 3.0.2 — иконка ярлыка и панели задач как на сайте",
+        "Multi-size ICO (16–256) из бренда doublemark.ru",
+        "Проверка обновления с 3.0.1",
+        "Build ID: 20260824-182349"
       ]
     },
     {
-      "version": "2.1.4",
-      "releaseDate": "2026-05-24",
-      "title": "DoubleMark 2.1.4",
+      "version": "3.0.1",
+      "releaseDate": "2026-08-24",
+      "title": "DoubleMark 3.0.1",
       "type": "archive",
       "recommended": false,
       "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.4.exe",
-      "sha256": "A0AD9000312F9F22FA20B8FDADBA85B11FD29B2F0309BC39567F5032BA6723B1",
+      "installerUrl": "https://doublemark.ru/downloads/archive/DoubleMarkSetup-3.0.1.exe",
+      "sha256": "7E049C021DF9CD0AC324841AE00F576CC12BCA05E641A577947454F61E4E2C06",
       "notes": [
-        "DoubleMark 2.1.4 — безопасное распространение для Windows",
-        "Проверка обновлений: HTTPS manifest, SHA-256 и Authenticode",
-        "Установщик без прав администратора, локальная история до 100 кодов",
-        "Исправлена сборка release-скриптов",
-        "Build ID: 20260524-174546"
+        "DoubleMark 3.0.1 — проверка обновлений с 3.0.0",
+        "Логотип как на сайте doublemark.ru",
+        "API: api.doublemark.ru",
+        "Build ID: 20260824-180828"
       ]
     },
     {
-      "version": "2.1.3",
-      "releaseDate": "2026-05-21",
-      "title": "DoubleMark 2.1.3",
+      "version": "3.0.0",
+      "releaseDate": "2026-08-24",
+      "title": "DoubleMark 3.0.0",
       "type": "archive",
       "recommended": false,
       "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.3-20260521-141217.exe",
-      "sha256": "E7F25071A6208427F67F3C811F8B14E53CCD026D1FF9EC8E2C27D7320D2CE7D2",
+      "installerUrl": "https://doublemark.ru/downloads/archive/DoubleMarkSetup-3.0.0.exe",
+      "sha256": "4440086D9AEB2090F9E0565437D14853EB183B3ABB01C2B4747792872780F0A1",
       "notes": [
-        "DoubleMark 2.1.3 — исправлено отображение версии и установка обновлений",
-        "Шаблоны печати и история сканов в облаке (Supabase)",
-        "Установщик закрывает приложение перед заменой файлов",
-        "Проверка и установка обновлений из приложения"
-      ]
-    },
-    {
-      "version": "2.1.2",
-      "releaseDate": "2026-05-21",
-      "title": "DoubleMark 2.1.2",
-      "type": "archive",
-      "recommended": false,
-      "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.2-20260521-133428.exe",
-      "sha256": "AF362B02EAE6A1664EC76B1D2FD2D4D70D9FBCF432522A419B3956760580AFB7",
-      "notes": [
-        "DoubleMark 2.1.2 — облачная синхронизация для аккаунта",
-        "Шаблоны печати сохраняются в Supabase и доступны на любом ПК после входа",
-        "История сканирования ЧЗ в облаке (до 100 записей на пользователя)",
-        "Проверка и установка обновлений из приложения"
-      ]
-    },
-    {
-      "version": "2.1.1",
-      "releaseDate": "2026-05-21",
-      "title": "DoubleMark 2.1.1",
-      "type": "archive",
-      "recommended": false,
-      "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.1-20260521-124531.exe",
-      "sha256": "7DB841DEBB388B9E8C704CB485D85B60BA5C88779F5FA386D3A15668688999A8",
-      "notes": [
-        "Исправлена работа HID/RawInput",
-        "Улучшена диагностика сканера",
-        "Добавлены логи ошибок",
-        "Улучшена автопечать"
-      ]
-    },
-    {
-      "version": "2.1.0",
-      "releaseDate": "2026-05-18",
-      "title": "DoubleMark 2.1.0",
-      "type": "archive",
-      "recommended": false,
-      "mandatory": false,
-      "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.0.exe",
-      "sha256": "PUT_SHA256_HASH_HERE",
-      "notes": [
-        "Production-сборка",
-        "Добавлен личный кабинет",
-        "Добавлена проверка подписки"
+        "DoubleMark 3.0 — новый интерфейс, личный кабинет и вход через api.doublemark.ru",
+        "Шаблоны этикеток: DataMatrix без обязательного текста",
+        "Логотип как на сайте doublemark.ru"
       ]
     }
   ]

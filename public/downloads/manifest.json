@@ -1,45 +1,33 @@
 {
-  "generatedAt": "2026-05-25T19:54:38.027Z",
+  "generatedAt": "2026-08-25T11:54:01.997Z",
   "prefix": "DoubleMarkSetup",
-  "productionBaseUrl": "https://shamsyyy.github.io/doublemarksite/",
+  "productionBaseUrl": "https://doublemark.ru/",
   "current": {
-    "2.1.6": {
-      "version": "2.1.6",
-      "fileName": "DoubleMarkSetup-2.1.6.exe",
-      "relativePath": "downloads/DoubleMarkSetup-2.1.6.exe",
-      "sha256": "E4290292355CC1C2E9D681908D25D7346F600F892C46AD6D85A77FFDBC9C368A"
+    "3.0.3": {
+      "version": "3.0.3",
+      "fileName": "DoubleMarkSetup-3.0.3.exe",
+      "relativePath": "downloads/DoubleMarkSetup-3.0.3.exe",
+      "sha256": "097F4B4E8DA3025A3E0C068AAB2A533E56B80F0B4B8B0DABDB3EF96DE2ED441C"
     }
   },
   "archive": {
-    "2.1.5": {
-      "version": "2.1.5",
-      "fileName": "DoubleMarkSetup-2.1.5.exe",
-      "relativePath": "downloads/archive/DoubleMarkSetup-2.1.5.exe",
-      "sha256": "2E379256A85E09C84DAF1345890B8CE50E64C9BF0602A3DF8665CCD8A4803C2E"
+    "3.0.2": {
+      "version": "3.0.2",
+      "fileName": "DoubleMarkSetup-3.0.2.exe",
+      "relativePath": "downloads/archive/DoubleMarkSetup-3.0.2.exe",
+      "sha256": "F020C73652890ED08253A90FCB62D7F7DA68E0AD16598B2F783384AC49D5E94B"
     },
-    "2.1.4": {
-      "version": "2.1.4",
-      "fileName": "DoubleMarkSetup-2.1.4.exe",
-      "relativePath": "downloads/archive/DoubleMarkSetup-2.1.4.exe",
-      "sha256": "A0AD9000312F9F22FA20B8FDADBA85B11FD29B2F0309BC39567F5032BA6723B1"
+    "3.0.1": {
+      "version": "3.0.1",
+      "fileName": "DoubleMarkSetup-3.0.1.exe",
+      "relativePath": "downloads/archive/DoubleMarkSetup-3.0.1.exe",
+      "sha256": "7E049C021DF9CD0AC324841AE00F576CC12BCA05E641A577947454F61E4E2C06"
     },
-    "2.1.3": {
-      "version": "2.1.3",
-      "fileName": "DoubleMarkSetup-2.1.3-20260521-141217.exe",
-      "relativePath": "downloads/archive/DoubleMarkSetup-2.1.3-20260521-141217.exe",
-      "sha256": "E7F25071A6208427F67F3C811F8B14E53CCD026D1FF9EC8E2C27D7320D2CE7D2"
-    },
-    "2.1.2": {
-      "version": "2.1.2",
-      "fileName": "DoubleMarkSetup-2.1.2-20260521-133428.exe",
-      "relativePath": "downloads/archive/DoubleMarkSetup-2.1.2-20260521-133428.exe",
-      "sha256": "AF362B02EAE6A1664EC76B1D2FD2D4D70D9FBCF432522A419B3956760580AFB7"
-    },
-    "2.1.1": {
-      "version": "2.1.1",
-      "fileName": "DoubleMarkSetup-2.1.1-20260521-124531.exe",
-      "relativePath": "downloads/archive/DoubleMarkSetup-2.1.1-20260521-124531.exe",
-      "sha256": "7DB841DEBB388B9E8C704CB485D85B60BA5C88779F5FA386D3A15668688999A8"
+    "3.0.0": {
+      "version": "3.0.0",
+      "fileName": "DoubleMarkSetup-3.0.0.exe",
+      "relativePath": "downloads/archive/DoubleMarkSetup-3.0.0.exe",
+      "sha256": "4440086D9AEB2090F9E0565437D14853EB183B3ABB01C2B4747792872780F0A1"
     }
   }
 }

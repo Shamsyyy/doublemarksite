@@ -1,68 +1,137 @@
-export const COMPANY = {
-  name: "DoubleMark",
-  legalName: "ООО/ИП DoubleMark",
-  inn: "000000000000",
-  ogrnip: "000000000000000",
-  registrationDate: "01.01.2026",
-  email: "support@example.com",
-  phone: "+7 (000) 000-00-00",
-  address: "Адрес будет указан перед публикацией",
-};
+import { COMPANY } from "../config/legal";
+
+export { COMPANY };
 
 export const HERO = {
-  title: "Дублирование кодов маркировки Честного Знака за секунды",
+  badge: "Windows-утилита для маркировки",
+  titleLead: "Дублирование кодов маркировки",
+  titleAccent: "без простоя линии",
   subtitle:
-    "Сканируйте существующий DataMatrix сканером или телефоном — Windows-приложение DoubleMark подготовит дубль и отправит на печать.",
-  primaryCta: "Попробовать",
-  secondaryCta: "Тарифы",
+    "DoubleMark сканирует DataMatrix, разбирает GS1 и готовит дубль к печати за секунды. Для склада, линии и малого производства.",
+  primaryCta: "Начать бесплатно",
+  secondaryCta: "Смотреть как работает",
+  secondaryHref: "/#how",
+  statusLine: "Windows · COM · HID · GS1 · печать дубля",
 };
 
-export const BENEFITS = [
+export const WORKFLOW_STATS = [
+  { value: "< 2 с", label: "скан → печать" },
+  { value: "3", label: "шага процесса" },
+  { value: "GS1", label: "разбор AI 01/21/91/92" },
+];
+
+export const FEATURES = [
   {
-    title: "Скорость на линии",
-    text: "Оператор сканирует код и сразу получает печать — меньше простоя и ручных действий.",
+    title: "Меньше простоя",
+    text: "Оператор сканирует код и сразу получает печать, без ручного копирования и лишних окон.",
+    icon: "zap" as const,
   },
   {
-    title: "Понятный сценарий",
-    text: "Один рабочий процесс: сканирование → разбор GS1 → печать дубля.",
+    title: "Понятный процесс",
+    text: "Один сценарий: сканирование, разбор GS1, печать дубля. Без скрытых шагов.",
+    icon: "route" as const,
   },
   {
-    title: "Windows для склада",
-    text: "Настольное приложение рядом с принтером: COM, HID и загрузка фото кода.",
+    title: "Рядом с принтером",
+    text: "Настольное приложение под Windows: COM, HID и фото DataMatrix там, где стоят сканер и принтер.",
+    icon: "monitor" as const,
+  },
+  {
+    title: "Разбор GS1",
+    text: "Нормализация AI 01/21 и сохранение AI 91/92 в полных кодах без потери разделителей.",
+    icon: "scan" as const,
+  },
+  {
+    title: "Быстрый старт",
+    text: "Регистрация на сайте, скачивание установщика и работа на вашем оборудовании в тот же день.",
+    icon: "rocket" as const,
   },
   {
     title: "Честные ограничения",
-    text: "Сайт объясняет разницу коротких и полных кодов, настройку GS/FNC1 и риски HID-обрезки.",
+    text: "Приложение объясняет короткие и полные коды, GS/FNC1 и риски обрезки HID.",
+    icon: "shield" as const,
   },
 ];
 
+/** @deprecated use FEATURES */
+export const BENEFITS = FEATURES.map((item, i) => ({
+  title: item.title,
+  text: item.text,
+  status: i === 5 ? ("warn" as const) : ("ready" as const),
+}));
+
 export const HOW_IT_WORKS = [
   {
-    step: "1",
-    title: "Сканирование",
-    text: "Считайте код маркировки сканером (COM/HID) или загрузите фото DataMatrix.",
+    step: "01",
+    title: "Сканирование кода",
+    text: "Считайте DataMatrix сканером COM/HID или загрузите фото. DoubleMark сразу принимает код в работу.",
+    preview: "scan" as const,
+    icon: "scan" as const,
   },
   {
-    step: "2",
+    step: "02",
     title: "Разбор GS1",
-    text: "DoubleMark нормализует поля AI 01/21 и при полном коде — AI 91/92.",
+    text: "Приложение нормализует AI 01/21 и сохраняет AI 91/92 в полных кодах без потери разделителей FNC1.",
+    preview: "parse" as const,
+    icon: "route" as const,
   },
   {
-    step: "3",
+    step: "03",
     title: "Печать дубля",
-    text: "Подготовленный дубль отправляется на принтер по вашему сценарию печати.",
+    text: "Готовый дубль уходит на принтер по вашему шаблону. Оператор видит статус и историю операций.",
+    preview: "print" as const,
+    icon: "monitor" as const,
   },
+];
+
+/** Реальные отзывы пока не собраны — на сайте показывается empty-state. */
+export const TESTIMONIALS: Array<{
+  quote: string;
+  name: string;
+  role: string;
+  company?: string;
+  image?: string;
+}> = [];
+
+export const FAQ = [
+  {
+    question: "Какие сканеры поддерживаются?",
+    answer:
+      "COM и HID сканеры, а также загрузка фото DataMatrix. Совместимость зависит от модели: проверяйте на вашем оборудовании.",
+  },
+  {
+    question: "Нужен ли интернет для печати?",
+    answer:
+      "Для работы приложения интернет не обязателен. Аккаунт и подписка оформляются на сайте doublemark.ru.",
+  },
+  {
+    question: "Чем полный код отличается от короткого?",
+    answer:
+      "Короткий код содержит базовые AI, полный включает криптографические блоки AI 91/92. DoubleMark сохраняет разделители GS1/FNC1.",
+  },
+  {
+    question: "Есть ли пробный период?",
+    answer:
+      "Да, при первой подписке доступен бесплатный период. Подробности на странице тарифов.",
+  },
+];
+
+export const TRUST_SIGNALS = [
+  { label: "Платформа", value: "Windows 10/11, .NET 8" },
+  { label: "Сканеры", value: "COM, HID, фото DataMatrix" },
+  { label: "Аккаунт", value: "Регистрация на doublemark.ru" },
+  { label: "Обновления", value: "Автопроверка через update.json" },
 ];
 
 export const PRODUCT_NOTES = [
   "Сейчас доступно Windows-приложение (.NET 8, WPF).",
-  "Мобильное приложение для печати без 2D-сканера — в roadmap.",
-  "Совместимость зависит от модели сканера и принтера.",
+  "Мобильное приложение для печати без 2D-сканера в roadmap.",
+  "Совместимость зависит от модели сканера и принтера: проверяйте на вашем оборудовании.",
 ];
 
 /** @deprecated Use versions from public/updates/versions.json via appVersions.ts */
 export const DESKTOP_RELEASE = {
-  version: "2.1.1",
-  downloadUrl: "/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+  version: "3.0.0",
+  downloadUrl: "/downloads/DoubleMarkSetup-3.0.0.exe",
   changelog: "См. public/updates/versions.json",
 };

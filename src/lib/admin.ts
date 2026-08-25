@@ -1,4 +1,18 @@
-import { getSupabaseClient } from "./supabase/client";
+import {
+  apiAdminDeleteUser,
+  apiAdminGetDevices,
+  apiAdminGetOrganizations,
+  apiAdminGetOverview,
+  apiAdminGetPayments,
+  apiAdminGetUsers,
+  apiAdminResendConfirmation,
+  apiAdminResetPassword,
+  apiAdminSetUserRole,
+  type AdminDevicePayload,
+  type AdminOrganizationPayload,
+  type AdminPaymentPayload,
+  type AdminUserPayload,
+} from "./api/client";
 
 export type AdminRecentUser = {
   id: string;
@@ -30,82 +44,87 @@ export type AdminDashboardStats = {
   revenueTotal: number;
   revenue30d: number;
   registeredDevices: number;
+  organizations: number;
+  markingCodes: number;
+  codeOperations: number;
   recentUsers: AdminRecentUser[];
   recentPayments: AdminRecentPayment[];
 };
 
-type AdminStatsPayload = {
-  total_users?: number;
-  new_users_7d?: number;
-  new_users_30d?: number;
-  active_subscriptions?: number;
-  trialing_subscriptions?: number;
-  expired_subscriptions?: number;
-  total_payments?: number;
-  successful_payments?: number;
-  revenue_total?: number;
-  revenue_30d?: number;
-  registered_devices?: number;
-  recent_users?: Array<{
-    id: string;
-    email: string | null;
-    company_name: string | null;
-    role: string | null;
-    created_at: string;
-  }>;
-  recent_payments?: Array<{
-    id: string;
-    email: string | null;
-    plan_id: string;
-    amount: number;
-    currency: string | null;
-    status: string;
-    created_at: string;
-  }>;
-};
-
-function numberValue(value: number | undefined): number {
-  return typeof value === "number" ? value : 0;
-}
+export type AdminUser = AdminUserPayload;
+export type AdminOrganization = AdminOrganizationPayload;
+export type AdminPayment = AdminPaymentPayload;
+export type AdminDevice = AdminDevicePayload;
 
 export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
-  const { data, error } = await getSupabaseClient().rpc(
-    "get_admin_dashboard_stats",
-  );
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  const payload = (data ?? {}) as AdminStatsPayload;
-
+  const payload = await apiAdminGetOverview();
   return {
-    totalUsers: numberValue(payload.total_users),
-    newUsers7d: numberValue(payload.new_users_7d),
-    newUsers30d: numberValue(payload.new_users_30d),
-    activeSubscriptions: numberValue(payload.active_subscriptions),
-    trialingSubscriptions: numberValue(payload.trialing_subscriptions),
-    expiredSubscriptions: numberValue(payload.expired_subscriptions),
-    totalPayments: numberValue(payload.total_payments),
-    successfulPayments: numberValue(payload.successful_payments),
-    revenueTotal: numberValue(payload.revenue_total),
-    revenue30d: numberValue(payload.revenue_30d),
-    registeredDevices: numberValue(payload.registered_devices),
-    recentUsers: (payload.recent_users ?? []).map((user) => ({
+    totalUsers: payload.totalUsers,
+    newUsers7d: payload.newUsers7d,
+    newUsers30d: payload.newUsers30d,
+    activeSubscriptions: payload.activeSubscriptions,
+    trialingSubscriptions: payload.trialingSubscriptions,
+    expiredSubscriptions: payload.expiredSubscriptions,
+    totalPayments: payload.totalPayments,
+    successfulPayments: payload.successfulPayments,
+    revenueTotal: payload.revenueTotal,
+    revenue30d: payload.revenue30d,
+    registeredDevices: payload.registeredDevices,
+    organizations: payload.organizations,
+    markingCodes: payload.markingCodes,
+    codeOperations: payload.codeOperations,
+    recentUsers: payload.recentUsers.map((user) => ({
       id: user.id,
       email: user.email,
-      companyName: user.company_name,
+      companyName: user.companyName,
       role: user.role,
-      createdAt: user.created_at,
+      createdAt: user.createdAt,
     })),
-    recentPayments: (payload.recent_payments ?? []).map((payment) => ({
+    recentPayments: payload.recentPayments.map((payment) => ({
       id: payment.id,
       email: payment.email,
-      planId: payment.plan_id,
+      planId: payment.planId,
       amount: payment.amount,
       currency: payment.currency ?? "RUB",
-      status: payment.status,
-      createdAt: payment.created_at,
+      status: payment.status ?? "",
+      createdAt: payment.createdAt,
     })),
   };
+}
+
+export function getAdminUsers(): Promise<AdminUser[]> {
+  return apiAdminGetUsers();
+}
+
+export function getAdminOrganizations(): Promise<AdminOrganization[]> {
+  return apiAdminGetOrganizations();
+}
+
+export function getAdminPayments(): Promise<AdminPayment[]> {
+  return apiAdminGetPayments();
+}
+
+export function getAdminDevices(): Promise<AdminDevice[]> {
+  return apiAdminGetDevices();
+}
+
+export function setAdminUserRole(
+  userId: string,
+  role: "admin" | "user",
+): Promise<AdminUser> {
+  return apiAdminSetUserRole(userId, role);
+}
+
+export function adminResetUserPassword(userId: string): Promise<{ ok: boolean; message: string }> {
+  return apiAdminResetPassword(userId);
+}
+
+export function adminResendUserConfirmation(
+  userId: string,
+): Promise<{ ok: boolean; message: string }> {
+  return apiAdminResendConfirmation(userId);
+}
+
+export function adminDeleteUser(userId: string): Promise<void> {
+  return apiAdminDeleteUser(userId);
 }

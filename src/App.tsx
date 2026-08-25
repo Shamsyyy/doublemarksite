@@ -6,13 +6,18 @@ import { HomePage } from "./pages/HomePage";
 import { PricingPage } from "./pages/PricingPage";
 import { ContactsPage } from "./pages/ContactsPage";
 import { LegalPage } from "./pages/LegalPage";
+import { PrivacyPage } from "./pages/PrivacyPage";
+import { CookiePolicyPage } from "./pages/CookiePolicyPage";
+import { PersonalDataConsentPage } from "./pages/PersonalDataConsentPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ConfirmEmailPage } from "./pages/ConfirmEmailPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { UpdatePasswordPage } from "./pages/UpdatePasswordPage";
 import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { AccountPage } from "./pages/AccountPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
+import { CheckoutResultPage } from "./pages/CheckoutResultPage";
 import { DownloadPage } from "./pages/DownloadPage";
 import { AdminPage } from "./pages/AdminPage";
 
@@ -25,12 +30,16 @@ export function App() {
             <Route index element={<HomePage />} />
             <Route path="pricing" element={<PricingPage />} />
             <Route path="contacts" element={<ContactsPage />} />
+            <Route path="privacy" element={<PrivacyPage />} />
+            <Route path="cookies" element={<CookiePolicyPage />} />
+            <Route path="personal-data-consent" element={<PersonalDataConsentPage />} />
             <Route path="legal/privacy" element={<LegalPage slug="privacy" />} />
             <Route path="legal/terms" element={<LegalPage slug="terms" />} />
             <Route path="legal/cookies" element={<LegalPage slug="cookies" />} />
             <Route path="legal/requisites" element={<LegalPage slug="requisites" />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+            <Route path="confirm-email" element={<ConfirmEmailPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
             <Route path="update-password" element={<UpdatePasswordPage />} />
             <Route path="auth/callback" element={<AuthCallbackPage />} />
@@ -47,6 +56,14 @@ export function App() {
               element={
                 <ProtectedRoute>
                   <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="checkout/result"
+              element={
+                <ProtectedRoute>
+                  <CheckoutResultPage />
                 </ProtectedRoute>
               }
             />

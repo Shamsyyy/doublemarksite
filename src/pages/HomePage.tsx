@@ -1,241 +1,284 @@
 import { Link } from "react-router-dom";
-import { Zap, Workflow, Monitor, ShieldCheck, ScanLine, Cpu, Printer } from "lucide-react";
 import {
-  BENEFITS,
+  ArrowRight,
+  Clock,
+  Monitor,
+  Printer,
+  Rocket,
+  Route,
+  ScanLine,
+  Shield,
+  Zap,
+} from "lucide-react";
+import {
   COMPANY,
+  FAQ,
+  FEATURES,
   HERO,
   HOW_IT_WORKS,
-  PRODUCT_NOTES,
+  TESTIMONIALS,
 } from "../content/site";
-import { BrandLogo } from "../components/BrandLogo";
+import { EditorialTestimonials } from "../components/EditorialTestimonials";
+import { HeroDashboard } from "../components/HeroDashboard";
+import { HeroFloatCards } from "../components/HeroFloatCards";
 
-function AppMockup() {
-  return (
-    <div className="mockup-window">
-      <div className="mockup-titlebar">
-        <span className="mockup-dot" style={{ background: '#f87171' }} />
-        <span className="mockup-dot" style={{ background: '#fbbf24' }} />
-        <span className="mockup-dot" style={{ background: '#34d399' }} />
-        <span style={{ marginLeft: '0.75rem', fontSize: '0.75rem', color: '#5a6a84' }}>
-          DoubleMark v2.1.0
-        </span>
+const featureIcons = {
+  zap: Zap,
+  route: Route,
+  monitor: Monitor,
+  scan: ScanLine,
+  rocket: Rocket,
+  shield: Shield,
+} as const;
+
+const stepIcons = {
+  scan: ScanLine,
+  route: Route,
+  monitor: Monitor,
+} as const;
+
+function StepPreview({ type }: { type: (typeof HOW_IT_WORKS)[number]["preview"] }) {
+  if (type === "scan") {
+    return (
+      <div className="cos-step-ui">
+        <div className="cos-step-ui-head">
+          <div className="cos-step-ui-avatar">DM</div>
+          <div>
+            <strong>Сканирование · линия 2</strong>
+            <span>COM / HID · онлайн</span>
+          </div>
+        </div>
+        <div className="cos-step-ui-scan">
+          <ScanLine size={32} strokeWidth={1.5} />
+          <span>DataMatrix принят</span>
+        </div>
+        <div className="cos-step-ui-fields">
+          <div><span>AI 01</span><strong>04601234567890</strong></div>
+          <div><span>AI 21</span><strong>SN-8842-AX</strong></div>
+        </div>
+        <div className="cos-step-ui-progress">
+          <span>Готовность к разбору</span>
+          <div className="cos-step-ui-bar"><span style={{ width: "92%" }} /></div>
+          <em>92%</em>
+        </div>
       </div>
-      <div className="mockup-body" style={{ display: 'flex', minHeight: '280px' }}>
-        {/* Sidebar */}
-        <div style={{
-          width: '160px',
-          background: '#080d14',
-          borderRight: '1px solid #1e2d42',
-          padding: '0.75rem 0',
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2px',
-        }}>
-          {[
-            { label: 'Главная', active: true },
-            { label: 'Сканирование', active: false },
-            { label: 'Печать', active: false },
-            { label: 'История', active: false },
-          ].map(item => (
-            <div key={item.label} style={{
-              padding: '0.5rem 1rem',
-              fontSize: '0.75rem',
-              color: item.active ? '#f0f4fc' : '#5a6a84',
-              background: item.active ? 'rgba(59,130,246,0.15)' : 'transparent',
-              borderLeft: item.active ? '2px solid #3b82f6' : '2px solid transparent',
-              cursor: 'pointer',
-            }}>
-              {item.label}
-            </div>
-          ))}
+    );
+  }
+
+  if (type === "parse") {
+    return (
+      <div className="cos-step-ui">
+        <p className="cos-step-ui-kicker">Разбор GS1</p>
+        <div className="cos-step-ui-tags">
+          <span>AI 01 · GTIN</span>
+          <span>AI 21 · серийный</span>
+          <span>AI 91/92</span>
         </div>
-
-        {/* Main content */}
-        <div style={{ flex: 1, padding: '0.875rem', display: 'grid', gap: '0.625rem', gridTemplateColumns: '1fr 1fr', alignContent: 'start' }}>
-          {/* Scanning card */}
-          <div style={{
-            background: '#111827',
-            border: '1px solid #1e2d42',
-            borderRadius: '8px',
-            padding: '0.75rem',
-          }}>
-            <div style={{ fontSize: '0.7rem', color: '#8896b0', marginBottom: '0.5rem', fontWeight: 600 }}>Сканирование</div>
-            <div style={{ fontSize: '0.65rem', color: '#34d399', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', display: 'inline-block' }} />
-              Сканер HID настроен
-            </div>
-            <div style={{
-              background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-              borderRadius: '5px',
-              padding: '0.35rem 0.625rem',
-              fontSize: '0.65rem',
-              color: 'white',
-              textAlign: 'center',
-              marginTop: '0.5rem',
-            }}>
-              Подключить
-            </div>
-          </div>
-
-          {/* Autoprint card */}
-          <div style={{
-            background: '#111827',
-            border: '1px solid #1e2d42',
-            borderRadius: '8px',
-            padding: '0.75rem',
-          }}>
-            <div style={{ fontSize: '0.7rem', color: '#8896b0', marginBottom: '0.5rem', fontWeight: 600 }}>Автопечать</div>
-            <div style={{ fontSize: '0.65rem', color: '#8896b0', marginBottom: '0.35rem' }}>Принтер: По умолчанию</div>
-            <div style={{
-              background: 'linear-gradient(135deg, #22d3ee, #3b82f6)',
-              borderRadius: '5px',
-              padding: '0.35rem 0.625rem',
-              fontSize: '0.65rem',
-              color: 'white',
-              textAlign: 'center',
-              marginTop: '0.5rem',
-            }}>
-              Печать последнего ЧЗ
-            </div>
-          </div>
-
-          {/* Last scan */}
-          <div style={{
-            background: '#111827',
-            border: '1px solid #1e2d42',
-            borderRadius: '8px',
-            padding: '0.75rem',
-            gridColumn: '1 / -1',
-          }}>
-            <div style={{ fontSize: '0.7rem', color: '#8896b0', marginBottom: '0.5rem', fontWeight: 600 }}>Последний скан</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-              {[
-                { label: 'AI 21', value: '5s7Zjg7' },
-                { label: 'AI 92/93', value: 'zUHK' },
-                { label: 'GS count', value: '1' },
-              ].map(f => (
-                <div key={f.label}>
-                  <div style={{ fontSize: '0.6rem', color: '#5a6a84' }}>{f.label}</div>
-                  <div style={{ fontSize: '0.7rem', color: '#3b82f6', fontWeight: 600 }}>{f.value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <ul className="cos-step-ui-list">
+          <li><span>GTIN распознан</span><strong>97%</strong></li>
+          <li><span>FNC1 сохранён</span><strong>100%</strong></li>
+          <li><span>Разделители GS</span><strong>100%</strong></li>
+        </ul>
+        <div className="cos-step-ui-match">
+          <span className="cos-match-pill">Совместимость высокая</span>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cos-step-ui">
+      <div className="cos-step-ui-head">
+        <div className="cos-step-ui-avatar cos-step-ui-avatar-print">
+          <Printer size={18} />
+        </div>
+        <div>
+          <strong>Печать дубля</strong>
+          <span>Принтер готов · шаблон v3</span>
+        </div>
+      </div>
+      <div className="cos-step-ui-pipeline">
+        <div><span>Готово</span><strong>1 279</strong></div>
+        <div><span>Очередь</span><strong>3</strong></div>
+        <div className="cos-pipeline-won"><span>Последний</span><strong>1.2 с</strong></div>
+      </div>
+      <div className="cos-step-ui-progress">
+        <span>Успешных печатей сегодня</span>
+        <div className="cos-step-ui-bar"><span style={{ width: "99%" }} /></div>
+        <em>99.6%</em>
       </div>
     </div>
   );
 }
 
-const BENEFIT_ICONS = [Zap, Workflow, Monitor, ShieldCheck];
-const STEP_ICONS = [ScanLine, Cpu, Printer];
-
 export function HomePage() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <BrandLogo size={52} withText={false} />
-          <p className="eyebrow">Для малого бизнеса и склада</p>
-          <h1>
-            <span className="h1-gradient">{HERO.title.split(' ').slice(0, 3).join(' ')}</span>
-            {' '}{HERO.title.split(' ').slice(3).join(' ')}
+      <section
+        className="cos-hero-stage"
+        style={
+          {
+            "--hero-bg-image": `url("${import.meta.env.BASE_URL}hero-bg-test.png")`,
+          } as React.CSSProperties
+        }
+      >
+        <div className="cos-hero-flute" aria-hidden="true" />
+        <div className="cos-hero-inner">
+          <span className="cos-badge">{HERO.badge}</span>
+          <h1 className="cos-hero-title">
+            {HERO.titleLead}
+            <br />
+            <span>{HERO.titleAccent}</span>
           </h1>
-          <p className="lead">{HERO.subtitle}</p>
-          <div className="hero-actions">
-            <Link to="/register" className="btn btn-primary">
-              <Zap size={16} />
+          <p className="cos-lead cos-lead-center">{HERO.subtitle}</p>
+          <div className="cos-hero-actions cos-hero-actions-center">
+            <Link to="/register" className="btn btn-primary btn-lg">
               {HERO.primaryCta}
+              <ArrowRight size={22} />
             </Link>
-            <Link to="/pricing" className="btn btn-secondary">
+            <Link to={HERO.secondaryHref} className="btn btn-secondary btn-lg">
               {HERO.secondaryCta}
             </Link>
           </div>
-          <div className="hero-stats">
-            <div className="stat-item">
-              <span className="stat-number">&lt;&nbsp;2с</span>
-              <span className="stat-label">на скан и печать</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">3</span>
-              <span className="stat-label">шага в процессе</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">GS1</span>
-              <span className="stat-label">полный разбор</span>
-            </div>
+          <div className="cos-hero-visual-wrap">
+            <HeroFloatCards />
+            <HeroDashboard />
           </div>
         </div>
+      </section>
 
-        {/* Right: App Screenshot Mockup */}
-        <div className="hero-mockup">
-          <AppMockup />
+      <section id="how" className="cos-steps-section anchor-section">
+        <div className="cos-steps-flute" aria-hidden="true" />
+        <div className="cos-container">
+          <div className="cos-section-head cos-section-head-center">
+            <span className="cos-how-badge">
+              <Clock size={14} />
+              Как это работает
+            </span>
+            <h2>Три шага до печати дубля</h2>
+            <p className="cos-section-lead">
+              От сканирования до принтера за минуты. Вот как устроен процесс на линии.
+            </p>
+          </div>
+          <div className="cos-steps-flow">
+            {HOW_IT_WORKS.map((step, index) => {
+              const Icon = stepIcons[step.icon];
+              return (
+                <article
+                  key={step.step}
+                  className={`cos-step-row fade-in-up${index % 2 === 1 ? " cos-step-row-reverse" : ""}`}
+                >
+                  <div className="cos-step-content">
+                    <div className="cos-step-meta">
+                      <span className="cos-step-icon-wrap">
+                        <Icon size={22} strokeWidth={1.75} />
+                      </span>
+                      <span className="cos-step-label">Шаг {step.step}</span>
+                    </div>
+                    <h3>{step.title}</h3>
+                    <p>{step.text}</p>
+                    <Link to="/register" className="cos-learn-more">
+                      Подробнее
+                      <ArrowRight size={16} />
+                    </Link>
+                  </div>
+                  <div className="cos-step-visual">
+                    <StepPreview type={step.preview} />
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+          <div className="cos-section-cta">
+            <Link to="/register" className="btn btn-primary btn-lg">
+              Начать бесплатно
+              <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="benefits" className="section anchor-section">
-        <h2>Преимущества</h2>
-        <div className="grid three">
-          {BENEFITS.map((item, i) => {
-            const Icon = BENEFIT_ICONS[i];
-            return (
-              <article key={item.title} className="card fade-in-up">
-                <div className="card-icon">
-                  <Icon size={20} />
-                </div>
-                <h3>{item.title}</h3>
-                <p className="muted">{item.text}</p>
-              </article>
-            );
-          })}
+      <section id="benefits" className="cos-section cos-section-dark anchor-section">
+        <div className="cos-container">
+          <div className="cos-section-head cos-section-head-center">
+            <p className="cos-eyebrow cos-eyebrow-light">Возможности</p>
+            <h2>Почему выбирают DoubleMark</h2>
+            <p className="cos-section-lead cos-section-lead-light">
+              Всё для быстрого дублирования кодов маркировки на складе и линии.
+            </p>
+          </div>
+          <div className="cos-feature-grid">
+            {FEATURES.map((item) => {
+              const Icon = featureIcons[item.icon];
+              return (
+                <article key={item.title} className="cos-feature-card fade-in-up">
+                  <div className="cos-feature-icon">
+                    <Icon size={20} />
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* How it Works Section */}
-      <section id="how" className="section section-muted anchor-section">
-        <h2>Как это работает</h2>
-        <ol className="steps">
-          {HOW_IT_WORKS.map((step, i) => {
-            const Icon = STEP_ICONS[i];
-            return (
-              <li key={step.step} className="fade-in-up">
-                <span className="step-icon">
-                  <Icon size={20} />
-                </span>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.text}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+      <section className="cos-section" id="testimonials">
+        <div className="cos-container">
+          <div className="cos-section-head cos-section-head-center">
+            <p className="cos-eyebrow">Отзывы</p>
+            <h2>Используют на складе и линии</h2>
+          </div>
+          <EditorialTestimonials
+            items={TESTIMONIALS.map((item) => ({
+              quote: item.quote,
+              author: item.name,
+              role: item.role,
+              company: item.company,
+              image: item.image,
+            }))}
+            emptyTitle="Пока что нет отзывов — вы можете стать первыми!"
+            emptyText={`Напишите на ${COMPANY.email || "support@doublemark.ru"} после внедрения на линии: расскажем о вашем кейсе на сайте.`}
+          />
+        </div>
       </section>
 
-      {/* Product Notes */}
-      <section className="section fade-in-up">
-        <h2>О продукте</h2>
-        <ul className="notes">
-          {PRODUCT_NOTES.map((note) => (
-            <li key={note}>{note}</li>
-          ))}
-        </ul>
+      <section className="cos-section cos-section-alt">
+        <div className="cos-container">
+          <div className="cos-section-head cos-section-head-center">
+            <p className="cos-eyebrow">FAQ</p>
+            <h2>Частые вопросы</h2>
+          </div>
+          <div className="cos-faq">
+            {FAQ.map((item) => (
+              <details key={item.question} className="cos-faq-item fade-in-up">
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* Contacts */}
-      <section id="contacts" className="section section-muted fade-in-up">
-        <h2>Контакты</h2>
-        <p>
-          Email: <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
-          <br />
-          Телефон: <a href={`tel:${COMPANY.phone}`}>{COMPANY.phone}</a>
-        </p>
-        <Link to="/contacts" className="btn btn-secondary">
-          Форма обратной связи
-        </Link>
+      <section id="contacts" className="cos-section cos-cta-band anchor-section">
+        <div className="cos-container">
+          <div className="cos-cta-inner">
+          <h2>Готовы ускорить маркировку?</h2>
+          <p>Создайте аккаунт, скачайте Windows-приложение и проверьте процесс на вашем оборудовании.</p>
+          <div className="cos-hero-actions cos-hero-actions-center">
+            <Link to="/register" className="btn btn-primary btn-lg">
+              Создать аккаунт
+            </Link>
+            <Link to="/contacts" className="btn btn-secondary btn-lg">
+              Связаться с нами
+            </Link>
+          </div>
+          <p className="cos-cta-contact">
+            <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
+          </p>
+          </div>
+        </div>
       </section>
     </>
   );

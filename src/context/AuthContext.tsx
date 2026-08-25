@@ -9,8 +9,6 @@ import { type PublicUser } from "../lib/auth";
 import type { RegistrationInput } from "../lib/validation";
 import { AuthContext } from "./auth-context";
 import { backendAdapter } from "../lib/backend/adapter";
-import { isLocalApiBackend } from "../lib/api/client";
-import { getSupabaseClient } from "../lib/supabase/client";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
@@ -38,21 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     void syncUser();
 
-    let unsubscribe: (() => void) | undefined;
-    if (!isLocalApiBackend()) {
-      try {
-        const { data } = getSupabaseClient().auth.onAuthStateChange(() => {
-          void syncUser();
-        });
-        unsubscribe = () => data.subscription.unsubscribe();
-      } catch {
-        // Supabase may be unconfigured during local setup.
-      }
-    }
-
     return () => {
       isMounted = false;
-      unsubscribe?.();
     };
   }, []);
 

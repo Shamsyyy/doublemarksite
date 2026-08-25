@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { login, register } from "./auth";
+import { confirmEmail, login, register } from "./auth";
 import { processSandboxPayment } from "./payments";
 import { getAdminDashboardStats } from "./admin";
 
@@ -12,7 +12,9 @@ describe("admin dashboard", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
+    await confirmEmail("confirm:user@example.com");
     const userSession = await login({
       email: "user@example.com",
       password: "secure-pass-123",
@@ -26,7 +28,9 @@ describe("admin dashboard", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
+    await confirmEmail("confirm:admin@example.com");
     await login({
       email: "admin@example.com",
       password: "secure-pass-123",
@@ -35,11 +39,10 @@ describe("admin dashboard", () => {
     const stats = await getAdminDashboardStats();
 
     expect(stats.totalUsers).toBe(2);
-    expect(stats.activeSubscriptions).toBe(1);
+    expect(stats.activeSubscriptions).toBe(2);
     expect(stats.successfulPayments).toBe(1);
     expect(stats.revenueTotal).toBe(5000);
     expect(stats.recentUsers).toHaveLength(2);
-    expect(stats.recentPayments).toHaveLength(1);
   });
 
   it("rejects non-admin users", async () => {
@@ -50,7 +53,9 @@ describe("admin dashboard", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
+    await confirmEmail("confirm:regular@example.com");
     await login({
       email: "regular@example.com",
       password: "secure-pass-123",

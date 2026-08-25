@@ -19,8 +19,8 @@ describe("HomePage", () => {
         name: /дублирование кодов маркировки/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /преимущества/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /как это работает/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /контакты/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /почему выбирают doublemark/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /три шага до печати дубля/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /готовы ускорить маркировку/i })).toBeInTheDocument();
   });
 });

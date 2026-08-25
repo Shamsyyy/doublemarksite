@@ -1,22 +1,35 @@
 import { describe, expect, it } from "vitest";
 import {
+  confirmEmail,
   getCurrentUser,
   login,
   register,
   logout,
+  requestPasswordReset,
   updatePassword,
 } from "./auth";
 
 describe("auth", () => {
-  it("registers and logs in user", async () => {
-    await register({
+  it("requires email confirmation before login", async () => {
+    const result = await register({
       email: "owner@example.com",
       password: "secure-pass-123",
       companyName: "ООО Пример",
       inn: "7707083893",
       phone: "+79001234567",
       consent: true,
+      acceptOffer: true,
     });
+    expect(result.needsEmailConfirmation).toBe(true);
+
+    await expect(
+      login({
+        email: "owner@example.com",
+        password: "secure-pass-123",
+      }),
+    ).rejects.toThrow(/подтвердите email/i);
+
+    await confirmEmail("confirm:owner@example.com");
 
     const session = await login({
       email: "owner@example.com",
@@ -36,6 +49,7 @@ describe("auth", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
 
     await expect(
@@ -46,6 +60,7 @@ describe("auth", () => {
         inn: "",
         phone: "",
         consent: true,
+        acceptOffer: true,
       }),
     ).rejects.toThrow(/already exists/i);
   });
@@ -58,7 +73,9 @@ describe("auth", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
+    await confirmEmail("confirm:session@example.com");
     await login({
       email: "session@example.com",
       password: "secure-pass-123",
@@ -76,13 +93,15 @@ describe("auth", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
+    await confirmEmail("confirm:logout@example.com");
     await login({ email: "logout@example.com", password: "secure-pass-123" });
     await logout();
     expect(await getCurrentUser()).toBeNull();
   });
 
-  it("updates password for the current recovery session", async () => {
+  it("sends password-reset request and updates password by token", async () => {
     await register({
       email: "reset@example.com",
       password: "secure-pass-123",
@@ -90,14 +109,20 @@ describe("auth", () => {
       inn: "",
       phone: "",
       consent: true,
+      acceptOffer: true,
     });
+    await confirmEmail("confirm:reset@example.com");
 
-    await updatePassword("new-secure-pass-123");
-    await logout();
+    const result = await requestPasswordReset("reset@example.com");
+    expect(result.ok).toBe(true);
+    expect(result.message).toMatch(/если аккаунт/i);
+
+    const message = await updatePassword("reset:reset@example.com", "new-pass-456");
+    expect(message).toMatch(/пароль обновлён/i);
 
     const session = await login({
       email: "reset@example.com",
-      password: "new-secure-pass-123",
+      password: "new-pass-456",
     });
     expect(session.user.email).toBe("reset@example.com");
   });

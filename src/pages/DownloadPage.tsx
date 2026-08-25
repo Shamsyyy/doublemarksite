@@ -20,19 +20,20 @@ import {
 } from "../lib/appVersions";
 import { isSubscriptionActive, type SubscriptionRecord } from "../lib/subscriptions";
 import { BrandLogo } from "../components/BrandLogo";
+import { apiRecordInstallerDownload } from "../lib/api/client";
 
 const FALLBACK_LATEST: AppVersion = {
-  version: "2.1.3",
-  releaseDate: "2026-05-21",
-  title: "DoubleMark 2.1.3",
+  version: "3.0.0",
+  releaseDate: "2026-08-24",
+  title: "DoubleMark 3.0",
   type: "latest",
   recommended: true,
-  mandatory: false,
-  installerUrl: `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-2.1.3.exe`,
+  mandatory: true,
+  installerUrl: `${import.meta.env.BASE_URL}downloads/DoubleMarkSetup-3.0.0.exe`,
   sha256: "PUT_SHA256_HASH_HERE",
   notes: [
-    "DoubleMark 2.1.3 — исправлено отображение версии и установка обновлений",
-    "Шаблоны печати и история сканов в облаке (Supabase)",
+    "DoubleMark 3.0 — новый интерфейс и вход через api.doublemark.ru",
+    "Обязательное обновление: старые версии 2.x больше не скачиваются",
   ],
 };
 
@@ -66,6 +67,15 @@ export function DownloadPage() {
   const [installerLinks, setInstallerLinks] = useState<Record<string, string>>({});
   const userId = user?.id;
 
+  async function trackInstallerDownload(version: string, url: string) {
+    try {
+      const fileName = url.split("/").pop()?.split("?")[0] || `DoubleMarkSetup-${version}.exe`;
+      await apiRecordInstallerDownload({ version, fileName });
+    } catch {
+      // Tracking must not block the download itself.
+    }
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -82,14 +92,16 @@ export function DownloadPage() {
           versionsManifest.versions.find((entry) => entry.version === versionsManifest.latest) ??
           versionsManifest.versions.find((entry) => entry.type === "latest") ??
           null;
+        const archived = versionsManifest.versions
+          .filter((entry) => entry.version !== versionsManifest.latest)
+          .filter((entry) => entry.type === "archive" || entry.version !== latest?.version)
+          .sort((a, b) =>
+            b.version.localeCompare(a.version, undefined, { numeric: true }),
+          );
 
         if (isMounted) {
           setLatestVersion(latest ?? FALLBACK_LATEST);
-          setArchivedVersions(
-            versionsManifest.versions
-              .filter((entry) => entry.type === "archive")
-              .sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true })),
-          );
+          setArchivedVersions(archived);
         }
 
         if (latest && updateManifest.version !== latest.version && isMounted) {
@@ -204,11 +216,14 @@ export function DownloadPage() {
 
   return (
     <section className="section download-page">
-      <BrandLogo size={44} withText={false} />
-      <h1>Скачать DoubleMark для Windows</h1>
-      <p className="lead">
-        Актуальная версия приложения, архив старых сборок и манифест для автообновления.
-      </p>
+      <div className="section-header">
+        <BrandLogo size={44} withText={false} />
+        <h1>Скачать DoubleMark для Windows</h1>
+        <p className="lead">
+          Центр выпусков: актуальная сборка DoubleMark 3.0 и манифест автообновления
+          с doublemark.ru. Ниже доступны предыдущие сборки 3.0 для отката и проверки.
+        </p>
+      </div>
 
       {versionsError && (
         <p className="error" role="alert">{versionsError}</p>
@@ -217,8 +232,8 @@ export function DownloadPage() {
       {isVersionsLoading ? (
         <p className="muted">Загружаем информацию о версиях...</p>
       ) : (
-        <>
-          <h2 className="download-history-heading">История версий</h2>
+        <div className="download-release-hub">
+          <div className="download-hub-header">Версии · Windows · .NET 8</div>
 
           <article className="card download-latest-card">
             <div className="download-latest-header">
@@ -266,6 +281,9 @@ export function DownloadPage() {
                         className="btn btn-primary download-primary-btn"
                         href={latestInstallerUrl}
                         download={getInstallerFileName(latestVersion, latestInstallerUrl)}
+                        onClick={() => {
+                          void trackInstallerDownload(latestVersion.version, latestInstallerUrl);
+                        }}
                       >
                         <Download size={18} />
                         Скачать последнюю версию
@@ -277,7 +295,7 @@ export function DownloadPage() {
                       <CheckCircle2 size={14} className="download-icon-success" />
                       <span>
                         Лицензия активна до{" "}
-                        {validUntil ? formatDate(validUntil) : "—"}
+                        {validUntil ? formatDate(validUntil) : "нет данных"}
                       </span>
                     </div>
                   </>
@@ -332,6 +350,12 @@ export function DownloadPage() {
                             version,
                             installerLinks[version.version],
                           )}
+                          onClick={() => {
+                            void trackInstallerDownload(
+                              version.version,
+                              installerLinks[version.version],
+                            );
+                          }}
                         >
                           <Download size={16} />
                           Скачать
@@ -360,7 +384,7 @@ export function DownloadPage() {
           <article className="card download-update-card">
             <h2>Автообновление</h2>
             <p className="muted">
-              Установленное приложение проверяет{" "}
+              Установленное приложение периодически проверяет{" "}
               <a
                 href={`${import.meta.env.BASE_URL}updates/update.json`}
                 target="_blank"
@@ -368,14 +392,14 @@ export function DownloadPage() {
               >
                 update.json
               </a>{" "}
-              на GitHub Pages.
+              на сервере doublemark.ru.
             </p>
             <p className="muted" style={{ marginTop: "0.75rem" }}>
               <AlertTriangle size={14} style={{ verticalAlign: "text-top", marginRight: "0.35rem" }} />
-              Перед релизом замените SHA256 в JSON-файлах на реальные значения.
+              SHA256 в манифесте обновляется при каждой публикации установщика.
             </p>
           </article>
-        </>
+        </div>
       )}
     </section>
   );

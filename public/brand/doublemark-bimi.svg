@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect x="24" y="24" width="464" height="464" rx="72" fill="#ffffff"/>
+  <g fill="#1a1a1a">
+    <path d="M120 104h116a16 16 0 0 1 16 16v18a16 16 0 0 1-16 16H152a32 32 0 0 0-32 32v68a16 16 0 0 1-16 16h-24a16 16 0 0 1-16-16v-92a78 78 0 0 1 78-78z"/>
+    <path d="M276 104h116a78 78 0 0 1 78 78v92a16 16 0 0 1-16 16h-24a16 16 0 0 1-16-16v-68a32 32 0 0 0-32-32h-84a16 16 0 0 1-16-16v-18a16 16 0 0 1 16-16z"/>
+    <path d="M80 342h24a16 16 0 0 1 16 16v68a32 32 0 0 0 32 32h84a16 16 0 0 1 16 16v18a16 16 0 0 1-16 16H120a78 78 0 0 1-78-78v-72a16 16 0 0 1 16-16z"/>
+    <path d="M430 342h24a16 16 0 0 1 16 16v72a78 78 0 0 1-78 78H276a16 16 0 0 1-16-16v-18a16 16 0 0 1 16-16h84a32 32 0 0 0 32-32v-68a16 16 0 0 1 16-16z"/>
+
+    <rect x="140" y="170" width="112" height="112" rx="16"/>
+    <rect x="170" y="200" width="52" height="52" rx="8" fill="#ffffff"/>
+
+    <rect x="140" y="302" width="88" height="88" rx="16"/>
+    <rect x="164" y="326" width="40" height="40" rx="8" fill="#ffffff"/>
+
+    <rect x="266" y="170" width="32" height="32" rx="8"/>
+    <rect x="328" y="170" width="32" height="32" rx="8"/>
+    <rect x="266" y="226" width="32" height="32" rx="8"/>
+    <rect x="328" y="226" width="56" height="56" rx="12"/>
+    <rect x="266" y="300" width="24" height="24" rx="6"/>
+    <rect x="350" y="302" width="32" height="32" rx="8"/>
+    <rect x="240" y="336" width="80" height="32" rx="10"/>
+    <rect x="294" y="282" width="32" height="86" rx="10"/>
+    <rect x="326" y="282" width="32" height="32" rx="10"/>
+    <rect x="240" y="368" width="32" height="32" rx="10"/>
+    <rect x="328" y="358" width="54" height="32" rx="10"/>
+  </g>
+</svg>

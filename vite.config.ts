@@ -5,13 +5,10 @@ declare const process: {
   env: Record<string, string | undefined>;
 };
 
-const repositoryName = process.env.GITHUB_REPOSITORY?.split("/").pop();
-const githubPagesBase = process.env.VITE_BASE_PATH || (
-  repositoryName ? `/${repositoryName}/` : "/doublemarksite/"
-);
+const productionBase = process.env.VITE_BASE_PATH ?? "/";
 
 export default defineConfig(({ command }) => ({
-  base: command === "serve" ? "/" : githubPagesBase,
+  base: command === "serve" ? "/" : productionBase,
   plugins: [react()],
   server: {
     port: 5173,

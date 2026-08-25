@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   define: {
     "import.meta.env.BASE_URL": JSON.stringify("/"),
+    "import.meta.env.VITE_BACKEND": JSON.stringify("local"),
   },
   test: {
     environment: "jsdom",
