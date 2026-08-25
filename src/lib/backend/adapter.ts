@@ -1,24 +1,5 @@
-import {
-  getCurrentUser,
-  login,
-  logout,
-  register,
-  requestPasswordReset,
-  type PublicUser,
-  type RegistrationResult,
-  type Session,
-} from "../auth";
-import {
-  getCurrentSubscription,
-  getUserPayments,
-  hasActiveSubscription,
-  processSandboxCheckout,
-  type PaymentRecord,
-  type SubscriptionRecord,
-} from "../subscriptions";
 import type { RegistrationInput } from "../validation";
 import type { PlanId } from "../../content/pricing";
-import { isLocalApiBackend } from "../api/client";
 import {
   localGetCurrentSubscription,
   localGetCurrentUser,
@@ -29,7 +10,11 @@ import {
   localProcessSandboxCheckout,
   localRegister,
   localRequestPasswordReset,
+  localStartCheckout,
 } from "../api/localAuth";
+import type { PublicUser, RegistrationResult, Session } from "../auth";
+import type { PaymentRecord, SubscriptionRecord } from "../subscriptions";
+import type { ApiCheckoutResponse } from "../api/client";
 
 export type PaymentOutcome = "succeeded" | "failed";
 
@@ -39,6 +24,7 @@ export type BackendAdapter = {
   register: (input: RegistrationInput) => Promise<RegistrationResult>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<{ ok: true; message: string }>;
+  startCheckout: (userId: string, planId: PlanId) => Promise<ApiCheckoutResponse>;
   processPaymentOutcome: (
     userId: string,
     planId: PlanId,
@@ -49,24 +35,13 @@ export type BackendAdapter = {
   getActiveEntitlement: (userId: string) => Promise<SubscriptionRecord | null>;
 };
 
-export const supabaseBackendAdapter: BackendAdapter = {
-  getCurrentUser,
-  login,
-  register,
-  logout,
-  requestPasswordReset,
-  processPaymentOutcome: processSandboxCheckout,
-  getPaymentsForUser: getUserPayments,
-  hasActiveLicense: hasActiveSubscription,
-  getActiveEntitlement: getCurrentSubscription,
-};
-
-export const localApiBackendAdapter: BackendAdapter = {
+export const backendAdapter: BackendAdapter = {
   getCurrentUser: localGetCurrentUser,
   login: localLogin,
   register: localRegister,
   logout: localLogout,
-  requestPasswordReset: async () => localRequestPasswordReset(),
+  requestPasswordReset: async (email) => localRequestPasswordReset(email),
+  startCheckout: localStartCheckout,
   processPaymentOutcome: async (userId, planId, outcome) => {
     if (outcome !== "succeeded") {
       return {
@@ -77,7 +52,7 @@ export const localApiBackendAdapter: BackendAdapter = {
         amount: 0,
         currency: "RUB",
         status: "failed",
-        provider: "local-api",
+        provider: "alpha-bank",
         providerPaymentId: null,
         createdAt: new Date().toISOString(),
       };
@@ -88,7 +63,3 @@ export const localApiBackendAdapter: BackendAdapter = {
   hasActiveLicense: localHasActiveSubscription,
   getActiveEntitlement: localGetCurrentSubscription,
 };
-
-export const backendAdapter: BackendAdapter = isLocalApiBackend()
-  ? localApiBackendAdapter
-  : supabaseBackendAdapter;

@@ -1,17 +1,13 @@
 # Windows installers
 
-Place the current build here. The file name may include a build timestamp, for example:
+Актуальная версия: `DoubleMarkSetup-<latest>.exe` в этой папке.
 
-- `DoubleMarkSetup-2.1.1-20260521-124531.exe`
+Предыдущие сборки 3.0.x: `archive/DoubleMarkSetup-<version>.exe`.
 
-The site matches any file whose name **starts with** `DoubleMarkSetup-<version>` (same prefix as the version in `versions.json`).
+Сборки 2.x не публикуются (nginx отдаёт 404).
 
-After adding `.exe` files, run:
+После добавления `.exe`:
 
 ```bash
 npm run downloads:sync
 ```
-
-This generates `manifest.json`, updates `installerUrl` / `sha256` in `update.json` and `versions.json`, and runs automatically before `npm run build`.
-
-Archive older builds in `public/downloads/archive/` with the same prefix pattern, e.g. `DoubleMarkSetup-2.1.0-*.exe`.

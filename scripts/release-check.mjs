@@ -6,6 +6,7 @@
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { PRODUCTION_BASE } from "./site-config.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(root, "..");
@@ -13,6 +14,7 @@ const PREFIX = "DoubleMarkSetup";
 
 const FORBIDDEN = [
   "shamsyy.github.io",
+  "shamsyyy.github.io/doublemarksite",
   "dublimarksite",
   "DubliMark",
   "Dublimark",
@@ -88,8 +90,8 @@ function main() {
     fail("No version entry matching versions.latest");
   }
 
-  if (!update.installerUrl.includes("shamsyyy.github.io/doublemarksite/")) {
-    fail("update.json installerUrl must use shamsyyy.github.io/doublemarksite/");
+  if (!update.installerUrl.includes("doublemark.ru/")) {
+    fail(`update.json installerUrl must use ${PRODUCTION_BASE}`);
   }
 
   if (update.sha256 === "PUT_SHA256_HASH_HERE") {
@@ -97,8 +99,8 @@ function main() {
   }
 
   for (const entry of versions.versions) {
-    if (!entry.installerUrl.includes("shamsyyy.github.io/doublemarksite/")) {
-      fail(`Version ${entry.version} installerUrl must use shamsyyy.github.io/doublemarksite/`);
+    if (!entry.installerUrl.includes("doublemark.ru/")) {
+      fail(`Version ${entry.version} installerUrl must use ${PRODUCTION_BASE}`);
     }
     if (entry.sha256 === "PUT_SHA256_HASH_HERE") {
       warn(`Version ${entry.version} sha256 is still PUT_SHA256_HASH_HERE`);

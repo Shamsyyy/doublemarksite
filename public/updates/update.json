@@ -1,17 +1,19 @@
 {
-  "version": "2.1.6",
-  "releaseDate": "2026-05-25",
-  "mandatory": false,
-  "title": "DoubleMark 2.1.6",
+  "version": "3.0.3",
+  "publishedAt": "2026-08-25T11:42:00.4581218Z",
+  "releaseDate": "2026-08-25",
+  "mandatory": true,
+  "title": "DoubleMark 3.0.3",
   "notes": [
-    "DoubleMark 2.1.6 — редактор шаблонов и улучшенный рендер текста на этикетке",
-    "Визуальный макет шаблона (TemplateLayoutCanvas)",
-    "Обновлённый предпросмотр и печать текстовых блоков",
-    "Автообновление по SHA-256 (requireSignature: false)",
-    "Build ID: 20260525-223846"
+    "DoubleMark 3.0.3 — показ пароля при входе",
+    "Кнопка «Показать/Скрыть» на экране входа в приложение",
+    "Сайт: мгновенная проверка совпадения паролей при регистрации",
+    "Сайт: показ пароля на странице входа",
+    "Build ID: 20260825-144147"
   ],
-  "installerUrl": "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.6.exe",
-  "sha256": "E4290292355CC1C2E9D681908D25D7346F600F892C46AD6D85A77FFDBC9C368A",
-  "minSupportedVersion": "2.0.0",
+  "downloadUrl": "https://doublemark.ru/downloads/DoubleMarkSetup-3.0.3.exe",
+  "installerUrl": "https://doublemark.ru/downloads/DoubleMarkSetup-3.0.3.exe",
+  "sha256": "097F4B4E8DA3025A3E0C068AAB2A533E56B80F0B4B8B0DABDB3EF96DE2ED441C",
+  "minSupportedVersion": "3.0.3",
   "requireSignature": false
 }

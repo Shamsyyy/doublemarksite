@@ -1,11 +1,12 @@
 import { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Save } from "lucide-react";
 import { updatePassword } from "../lib/auth";
 import { BrandLogo } from "../components/BrandLogo";
 
 export function UpdatePasswordPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,16 +19,21 @@ export function UpdatePasswordPage() {
     const form = new FormData(event.currentTarget);
     const password = String(form.get("password"));
     const confirmPassword = String(form.get("confirmPassword"));
+    const token = searchParams.get("token")?.trim() ?? "";
 
     if (password !== confirmPassword) {
       setError("Пароли не совпадают.");
       return;
     }
+    if (!token) {
+      setError("Ссылка восстановления неполная или повреждена.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      await updatePassword(password);
-      setMessage("Пароль обновлён. Сейчас перенаправим вас на вход.");
+      const resultMessage = await updatePassword(token, password);
+      setMessage(resultMessage);
       setTimeout(() => navigate("/login"), 1200);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка обновления пароля");
@@ -45,6 +51,11 @@ export function UpdatePasswordPage() {
           Введите новый пароль для аккаунта. Эта страница работает после перехода
           по ссылке из письма восстановления.
         </p>
+        {!searchParams.get("token") && (
+          <p className="error" role="alert">
+            В ссылке отсутствует токен восстановления. Запросите письмо ещё раз.
+          </p>
+        )}
         <label>
           Новый пароль
           <div className="input-wrap has-icon">

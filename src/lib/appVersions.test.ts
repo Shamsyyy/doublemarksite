@@ -19,7 +19,7 @@ const sampleManifest = {
       type: "latest" as const,
       recommended: true,
       mandatory: false,
-      installerUrl: "https://shamsyyy.github.io/doublemarksite/downloads/DoubleMarkSetup-2.1.1.exe",
+      installerUrl: "https://doublemark.ru/downloads/DoubleMarkSetup-2.1.1.exe",
       sha256: "abc123",
       notes: ["note1"],
     },
@@ -30,7 +30,7 @@ const sampleManifest = {
       type: "archive" as const,
       recommended: false,
       mandatory: false,
-      installerUrl: "https://shamsyyy.github.io/doublemarksite/downloads/archive/DoubleMarkSetup-2.1.0.exe",
+      installerUrl: "https://doublemark.ru/downloads/archive/DoubleMarkSetup-2.1.0.exe",
       sha256: "def456",
       notes: ["old"],
     },
@@ -40,7 +40,7 @@ const sampleManifest = {
 const downloadsManifest = {
   generatedAt: "2026-05-21T00:00:00.000Z",
   prefix: "DoubleMarkSetup",
-  productionBaseUrl: "https://shamsyyy.github.io/doublemarksite/",
+  productionBaseUrl: "https://doublemark.ru/",
   current: {
     "2.1.1": {
       version: "2.1.1",

@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = join(root, "dist");
 const indexPath = join(distDir, "index.html");
-const basePath = process.env.VITE_BASE_PATH || "/doublemarksite/";
+const basePath = process.env.VITE_BASE_PATH ?? "/";
 const segmentCount = basePath.replace(/^\/|\/$/g, "") ? 1 : 0;
 
 const routeRestoreScript = `<script type="text/javascript">

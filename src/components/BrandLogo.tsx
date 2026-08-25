@@ -9,7 +9,11 @@ export function BrandLogo({
   withText = true,
   className,
 }: BrandLogoProps) {
-  const logoUrl = `${import.meta.env.BASE_URL}brand/doublemark-logo.png`;
+  const baseUrl = import.meta.env.BASE_URL;
+  const logoUrl = `${baseUrl}brand/doublemark-logo.png`;
+  const iconUrl = size <= 36
+    ? `${baseUrl}brand/doublemark-favicon.png`
+    : logoUrl;
 
   return (
     <span
@@ -22,16 +26,16 @@ export function BrandLogo({
       }}
     >
       <img
-        src={logoUrl}
+        src={iconUrl}
         alt="DoubleMark"
         width={size}
         height={size}
+        decoding="async"
         style={{
           width: size,
           height: size,
           objectFit: "contain",
           flexShrink: 0,
-          filter: "drop-shadow(0 0 10px rgba(59, 130, 246, 0.22))",
         }}
       />
       {withText && <span>DoubleMark</span>}

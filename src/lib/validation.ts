@@ -1,10 +1,13 @@
 export type RegistrationInput = {
   email: string;
   password: string;
+  passwordConfirm?: string;
   companyName: string;
   inn: string;
   phone: string;
   consent: boolean;
+  acceptOffer: boolean;
+  personalDataConsentVersion?: string;
 };
 
 export type ValidationResult =
@@ -37,6 +40,12 @@ export function validateRegistration(input: RegistrationInput): ValidationResult
   if (!isValidPassword(input.password)) {
     errors.push("password");
   }
+  if (
+    input.passwordConfirm !== undefined &&
+    input.password !== input.passwordConfirm
+  ) {
+    errors.push("passwordConfirm");
+  }
   if (!input.companyName.trim()) {
     errors.push("companyName");
   }
@@ -45,6 +54,9 @@ export function validateRegistration(input: RegistrationInput): ValidationResult
   }
   if (!input.consent) {
     errors.push("consent");
+  }
+  if (!input.acceptOffer) {
+    errors.push("acceptOffer");
   }
   return errors.length ? { ok: false, errors } : { ok: true };
 }
